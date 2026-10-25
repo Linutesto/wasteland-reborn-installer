@@ -32,8 +32,13 @@ En dialogue, choisis **[Speak freely]** et écris ce que tu veux au personnage
 (en anglais, la langue du jeu).
 
 Menu Démarrer › Wasteland Reborn : *Configurer* (activer l'IA plus tard),
-*Installer sur le téléphone*, *Serveur IA (téléphone)* (l'IA du téléphone
-passe par le PC, sur le même Wi-Fi).
+*Installer sur le téléphone*, *Serveur IA (téléphone)*.
+
+**IA sur le téléphone** : elle passe par le PC (allumé, *Serveur IA* ouvert).
+Le menu propose « Partout » : l'installation installe et configure
+[Tailscale](https://tailscale.com) (VPN privé gratuit) sur le PC et le
+téléphone. Connecte-toi avec **le même compte** sur les deux. Ou « Seulement
+à la maison » (même Wi-Fi), ou pas d'IA sur le téléphone.
 
 ## Crédits
 

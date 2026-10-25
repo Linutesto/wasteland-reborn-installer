@@ -69,7 +69,10 @@ def main():
         return
 
     if server_only:
-        print(f"\nServeur IA pour le telephone : http://{lan_ip()}:{BRAIN_PORT}")
+        import tailscale
+        ts = tailscale.pc_ip() if tailscale.exe() else None
+        print(f"\nServeur IA pour le telephone : http://{lan_ip()}:{BRAIN_PORT}"
+              + (f"  (Tailscale : http://{ts}:{BRAIN_PORT})" if ts else ""))
         print("Laisse cette fenetre ouverte pendant que tu joues sur le telephone.")
         print("Ferme-la pour arreter.\n")
         try:

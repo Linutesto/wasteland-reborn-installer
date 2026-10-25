@@ -162,18 +162,35 @@ def phone_cfg(dest, settings):
         'ui': {'skip_opening_movies': '2'},
         'ai': {'enabled': '0', 'server': '', 'token': '', 'timeout_ms': '45000', 'content_id': 'fallout2'},
     }
-    ip = lan_ip()
-    if settings.get('ai') and ip:
-        print(f"""
-L'IA du telephone passe par ce PC ({ip}) : quand tu joues sur le telephone,
-le PC doit etre allume, sur le meme Wi-Fi, avec "Wasteland - Serveur IA
-(telephone)" ouvert. Sinon les PNJ parlent normalement, sans IA.""")
-        if yes('Activer l\'IA sur le telephone?'):
-            values['ai'].update(enabled='1', server=f'http://{ip}:{BRAIN_PORT}', token=token())
+    lan = lan_ip()
+    if settings.get('ai'):
+        print("""
+L'IA du telephone passe par ce PC : il doit etre allume avec
+"Wasteland - Serveur IA (telephone)" ouvert. Sinon les PNJ parlent sans IA.
+
+IA sur le telephone :
+  1. Partout (installe et configure Tailscale sur le PC et le telephone)
+  2. Seulement a la maison (meme Wi-Fi que le PC)
+  3. Pas d'IA sur le telephone""")
+        pick = ask('Choix', '1')
+        server_ip = None
+        if pick == '1':
+            import tailscale
+            ts_ip = tailscale.ensure_pc()
+            if ts_ip and tailscale.ensure_phone(adb):
+                server_ip = ts_ip
+            else:
+                print('Tailscale pas pret : l\'IA du telephone marchera a la maison (meme Wi-Fi).')
+                print('Pour reessayer : menu Demarrer > "Wasteland - Installer sur le telephone".')
+                server_ip = lan
+        elif pick == '2':
+            server_ip = lan
+        if server_ip:
+            values['ai'].update(enabled='1', server=f'http://{server_ip}:{BRAIN_PORT}', token=token())
             settings['phone_ai'] = True
-            if not settings.get('firewall'):
+            if not settings.get('firewall_ts'):
                 allow_firewall()
-                settings['firewall'] = True
+                settings['firewall_ts'] = True
         else:
             settings['phone_ai'] = False
     for section, kv in values.items():
@@ -185,8 +202,8 @@ def allow_firewall():
     """One UAC prompt so the phone can reach the AI server on this PC (local subnet only)."""
     rule = (f'netsh advfirewall firewall delete rule name="Wasteland IA" >nul 2>&1 & '
             f'netsh advfirewall firewall add rule name="Wasteland IA" dir=in action=allow '
-            f'protocol=TCP localport={BRAIN_PORT} remoteip=localsubnet')
-    print('Windows va demander une autorisation pour ouvrir le port de l\'IA (reseau local seulement).')
+            f'protocol=TCP localport={BRAIN_PORT} remoteip=localsubnet,100.64.0.0/10')
+    print('Windows va demander une autorisation pour ouvrir le port de l\'IA (reseau local et Tailscale seulement).')
     subprocess.run(['powershell', '-NoProfile', '-Command',
                     f"Start-Process cmd -Verb RunAs -WindowStyle Hidden -Wait -ArgumentList '/c {rule}'"],
                    creationflags=NO_WINDOW)
