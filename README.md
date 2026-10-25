@@ -7,7 +7,9 @@ Peut aussi installer le jeu sur un téléphone Android.
 
 ## ⬇️ Télécharger
 
-**[WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 Mo, Windows 10/11 64 bits)
+📱 **Android : [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)** (≈ 8 Mo) — si l'app Wasteland est déjà installée, c'est une mise à jour : tes sauvegardes restent. Le jeu lui-même (fichiers de Fallout 2) s'importe dans l'app, ou s'installe depuis le PC avec l'installateur Windows.
+
+💻 **Windows : [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 Mo, Windows 10/11 64 bits)
 
 ## Il te faut
 
