@@ -1,0 +1,4 @@
+[submodule "src/imbaner_fallout2-ce-mobile"]
+	path = src/imbaner_fallout2-ce-mobile
+	url = https://github.com/Linutesto/fallout2-ce-mobile.git
+	branch = wasteland-reborn

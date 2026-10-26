@@ -1,0 +1,9 @@
+# Downloaded or built by bootstrap.sh / build scripts
+/toolchain/*
+!/toolchain/mingw-w64.cmake
+/mods-cache/
+/build/
+/apk/
+/windows/build/
+/windows/dist/
+__pycache__/

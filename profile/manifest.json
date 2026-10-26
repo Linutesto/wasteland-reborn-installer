@@ -1,0 +1,48 @@
+{
+  "name": "ai-rpu",
+  "mods": [
+    {
+      "id": "rpu-v2.4.34",
+      "name": "Fallout 2 Restoration Project, updated (RPU)",
+      "version": "v2.4.34",
+      "source_url": "https://github.com/BGforgeNet/Fallout2_Restoration_Project/releases/download/v2.4.34/rpu_v2.4.34.zip",
+      "archive": "rpu_v2.4.34.zip",
+      "sha256": "b8f8a9c900a553c4e781e74bcf805f5663bc37b3633ebfbebfc928b70470285e",
+      "installer": "rpu-install.sh",
+      "install_doc": "https://github.com/BGforgeNet/Fallout2_Restoration_Project/blob/master/docs/linux.md (extract zip into game dir, run rpu-install.sh)",
+      "bundled": [
+        "Unofficial Patch fixes",
+        "HQ music",
+        "Hero Appearance (appearance/*.dat)",
+        "NPC Armor (mods/npc_armor.dat)",
+        "Party Orders (mods/party_orders.dat)",
+        "Cassidy talking head (mods/cassidy_head.dat + voice)",
+        "enhanced worldmap",
+        "extended flamer",
+        "rifle/wakizashi animations",
+        "improved Mysterious Stranger",
+        "alternative explosions",
+        "HRP data (mods/f2_res.dat)"
+      ]
+    },
+    {
+      "id": "fo2tweaks-v14.7",
+      "name": "FO2Tweaks",
+      "version": "v14.7",
+      "source_url": "https://github.com/BGforgeNet/FO2tweaks/releases/download/v14.7/fo2tweaks_v14.7.zip",
+      "archive": "fo2tweaks_v14.7.zip",
+      "sha256": "c8672900100727e097fc63a07d4f7f7d536f2d9a914dd7cd2d6b36005ed37e29",
+      "skip_files": [
+        "ddraw.dll"
+      ],
+      "install_doc": "https://github.com/BGforgeNet/FO2tweaks (copy mods/ into game dir; fo2tweaks.dat is already in RPU's mods_order.txt)"
+    }
+  ],
+  "notes": [
+    "RPU v2.4.34 + FO2Tweaks v14.7. NPC Armor, Party Orders and the Cassidy head are already bundled in RPU and not added again.",
+    "FO2Tweaks' ddraw.dll (sfall) is skipped: CE doesn't use it, and it would overwrite RPU's.",
+    "Inventory Filter is NOT included: it needs sfall AllowUnsafeScripting (direct memory access), which CE cannot provide; the mobile fork reimplements its filters natively. Tested separately, see docs/MOD-MATRIX.md.",
+    "Talking Heads (Lexx) is NOT included: no official repository/release page found to download from.",
+    "fallout2.cfg next to this manifest is the profile's whole config (RPU's, with the CE, touch and AI settings); overlay/ is copied over the mods last."
+  ]
+}

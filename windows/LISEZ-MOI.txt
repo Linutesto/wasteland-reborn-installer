@@ -1,0 +1,39 @@
+WASTELAND REBORN — Fallout 2 Restoration Project + PNJ avec IA
+================================================================
+
+CE QU'IL TE FAUT
+- Windows 10 ou 11 (64 bits)
+- Ta copie de Fallout 2 installee (Epic, Steam ou GOG). L'installation
+  retrouve ton jeu et prend ses fichiers : rien du jeu n'est inclus ici.
+- Optionnel : Ollama (https://ollama.com) pour les PNJ avec IA.
+- Optionnel : un telephone Android 64 bits pour y installer le jeu.
+
+INSTALLER
+1. Double-clique sur WastelandReborn-Setup.exe.
+   Windows peut afficher « Windows a protege votre ordinateur » (le fichier
+   n'est pas signe) : clique « Informations complementaires » puis
+   « Executer quand meme ».
+2. Suis l'installation. A la fin, une fenetre noire s'ouvre et pose des
+   questions : ton jeu, l'IA, puis le telephone.
+3. Joue avec l'icone « Wasteland Reborn » sur le bureau.
+
+L'IA (si Ollama est installe)
+- En dialogue, choisis « [Speak freely] » et ecris ce que tu veux au
+  personnage (en anglais, c'est la langue du jeu).
+- Le premier message peut prendre quelques secondes (chargement du modele).
+- Ollama installe apres coup? Menu Demarrer > « Wasteland - Configurer ».
+
+LE TELEPHONE
+- L'installation installe adb (outil Android officiel de Google) toute seule.
+- Sur le telephone : Options pour les developpeurs > Debogage sans fil ACTIVE,
+  meme Wi-Fi que le PC. Un petit menu te laisse choisir le telephone (ou en
+  associer un avec le code a 6 chiffres), ou passer.
+- Plus tard : menu Demarrer > « Wasteland - Installer sur le telephone ».
+- L'app s'appelle « Wasteland » (icone verte), a cote de l'autre si tu l'as deja.
+- IA sur le telephone : le PC doit etre allume avec « Wasteland - Serveur IA
+  (telephone) » ouvert. Dans le menu, choisis « Partout » pour que ca marche
+  hors de la maison : l'installation installe Tailscale (VPN prive gratuit)
+  sur le PC et le telephone. Connecte-toi avec le MEME compte sur les deux.
+
+Les sauvegardes sont dans le dossier d'installation, game\data\savegame
+(par defaut %LOCALAPPDATA%\WastelandReborn).
