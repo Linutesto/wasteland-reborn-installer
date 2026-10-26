@@ -663,8 +663,13 @@ class TestPersonas(unittest.TestCase):
         self.assertEqual(by_pid[16777589]["id"], "vic")
         self.assertEqual(by_pid[16777314]["id"], "maida")
         # every persona pid exists in the engine's critter table under the right name
+        # (docs/critter-pids.tsv is made from the game's own files by
+        # tools/critter_names.py, so it isn't in the public repository)
+        table = os.path.join(BRAIN, "..", "docs", "critter-pids.tsv")
+        if not os.path.exists(table):
+            self.skipTest("docs/critter-pids.tsv not generated")
         names = {}
-        with open(os.path.join(BRAIN, "..", "docs", "critter-pids.tsv")) as f:
+        with open(table) as f:
             for line in f:
                 parts = line.rstrip("\n").split("\t")
                 if len(parts) >= 3 and parts[0].isdigit():

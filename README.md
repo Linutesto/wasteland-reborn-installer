@@ -44,6 +44,35 @@ phone*, *AI server (phone)*.
 both. Or "Only at home" (same Wi-Fi), or no AI on the phone. Without the
 server the game plays normally, offline.
 
+## Build from source
+
+Everything is rebuilt from this repository on Linux x86_64. No Fallout 2 file is
+downloaded or included: players add their own at install time.
+
+```sh
+git clone --recursive https://github.com/Linutesto/wasteland-reborn-installer
+cd wasteland-reborn-installer
+./bootstrap.sh        # toolchains, RPU profile, APK (asks you to accept the Android SDK licenses)
+windows/build.sh      # windows/dist/WastelandReborn-Setup.exe
+```
+
+Host packages: `git cmake ninja rsync unzip curl tar xz python3`, ImageMagick,
+SDL2 and zlib development files, and `makensis` or Wine.
+`./bootstrap.sh --no-android` skips the Android SDK; then pass an APK:
+`APK=path/to.apk windows/build.sh`.
+
+| Part | Where | What |
+| --- | --- | --- |
+| Engine | `src/imbaner_fallout2-ce-mobile` (submodule, branch `wasteland-reborn`) | fallout2-ce mobile fork + touch UI, AI free talk, Windows build |
+| AI brain | `brain/` | Python HTTP server between the game and Ollama / an OpenAI-compatible server (`python3 -m unittest discover -s brain/tests`) |
+| Game profile | `profile/` + `tools/mkprofile.py` | RPU + FO2Tweaks from their GitHub releases (pinned sha256), the game config and overlay → `build/profile` |
+| Windows installer | `windows/` | NSIS installer, setup scripts (game detection, Ollama, phone over adb, Tailscale) |
+| Toolchains | `bootstrap.sh` → `toolchain/` | llvm-mingw 20261020, JDK 17, Android SDK 35 / NDK 27.3, embeddable Python 3.13.9, NSIS 3.11 |
+
+Your APK is signed with your own Android debug key, so it can't update the
+released app (Android refuses a different signature): back up your saves,
+uninstall the released app, then install yours.
+
 ## Credits
 
 - [Fallout 2 CE](https://github.com/alexbatalov/fallout2-ce) and the
@@ -99,6 +128,21 @@ Le menu propose « Partout » : l'installation installe et configure
 [Tailscale](https://tailscale.com) (VPN privé gratuit) sur le PC et le
 téléphone. Connecte-toi avec **le même compte** sur les deux. Ou « Seulement
 à la maison » (même Wi-Fi), ou pas d'IA sur le téléphone.
+
+## Construire depuis les sources
+
+Tout se reconstruit depuis ce dépôt sous Linux x86_64 (aucun fichier de Fallout 2
+n'est téléchargé ni inclus) :
+
+```sh
+git clone --recursive https://github.com/Linutesto/wasteland-reborn-installer
+cd wasteland-reborn-installer
+./bootstrap.sh        # outils, profil RPU, APK (tu acceptes les licences du SDK Android)
+windows/build.sh      # windows/dist/WastelandReborn-Setup.exe
+```
+
+Détails (paquets requis, structure du dépôt) : voir la section anglaise
+« Build from source » plus haut.
 
 ## Crédits
 

@@ -129,10 +129,17 @@ def build(dest, no_download):
         log(f"{mod['id']}: placed {copy_tree(staging, dest, skip)} files")
         script = mod.get("installer")
         if script:
+            # The installer checks for master.dat (a Fallout 2 folder) and
+            # edits fallout2.cfg: an empty stand-in and the base config, as
+            # no game file is used here.
+            placeholder = os.path.join(dest, "master.dat")
+            open(placeholder, "wb").close()
+            shutil.copy2(os.path.join(RECIPE, "fallout2.cfg"), os.path.join(dest, "fallout2.cfg"))
             log(f"{mod['id']}: running documented installer {script}")
             r = subprocess.run(["bash", script], cwd=dest, capture_output=True, text=True)
             sys.stdout.write(r.stdout)
             sys.stderr.write(r.stderr)
+            os.unlink(placeholder)
             if r.returncode != 0:
                 sys.exit(f"{script} failed with {r.returncode}")
 
