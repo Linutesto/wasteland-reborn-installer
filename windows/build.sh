@@ -2,17 +2,20 @@
 # Builds windows/dist/WastelandReborn-Setup.exe: Windows engine (llvm-mingw),
 # RPU profile (no Fallout game files, no saves, no tokens), brain, embeddable
 # Python, Android APK, then packs it with NSIS (native makensis, or under Wine).
-# Run ./bootstrap.sh once first (toolchains, profile, APK).
+#
+# Everything comes from this repository: the engine submodule (src/), brain/,
+# windows/, and what ./bootstrap.sh makes once (toolchain/, build/profile, the
+# APK). PROFILE=<dir> or APK=<file> override the last two.
 set -euo pipefail
 W=$(cd "$(dirname "$0")" && pwd)
 F=$(dirname "$W")
 T=$F/toolchain
 ENGINE=$F/src/imbaner_fallout2-ce-mobile
-# The profile mkprofile.py builds (build/profile), else the maintainer's.
-PROFILE=${PROFILE:-$([ -d "$F/build/profile" ] && echo "$F/build/profile" || echo "$F/profiles/ai-rpu")}
-# The newest released APK, else the one tools/android-build.sh made.
-APK=${APK:-$(ls -t "$F"/apk/wasteland-reborn-*-arm64.apk 2>/dev/null | head -1)}
+PROFILE=${PROFILE:-$F/build/profile}
 APK=${APK:-$ENGINE/os/android/app/build/outputs/apk/debug/app-debug.apk}
+for need in "$ENGINE/CMakeLists.txt" "$PROFILE/fallout2.cfg" "$APK" "$T/mingw-w64.cmake" "$T/win/python-embed.zip"; do
+    [ -e "$need" ] || { echo "missing $need: run ./bootstrap.sh first" >&2; exit 1; }
+done
 STAGE=$W/build/stage
 OUT=$W/dist/WastelandReborn-Setup.exe
 
