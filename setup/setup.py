@@ -14,13 +14,15 @@ import subprocess
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import (GAME, OLLAMA, ask, cfg_set, fatal, http_json, load_settings, ollama_exe,
-                    ollama_models, pause, save_settings, start_ollama, title, token, yes, BRAIN_PORT)
+from common import (GAME, LANG, OLLAMA, ask, cfg_set, fatal, http_json, load_settings, ollama_exe,
+                    ollama_models, pause, save_settings, start_ollama, t, title, token, yes, BRAIN_PORT)
 
 MODELS = [
-    ('qwen3:4b', 'Qwen 3 4B  - leger, ~2,6 Go, va sur presque tout (recommande)'),
-    ('qwen3:8b', 'Qwen 3 8B  - plus intelligent, ~5,2 Go, carte graphique 8 Go+'),
-    ('gemma3:4b', 'Gemma 3 4B - alternative, ~3,3 Go'),
+    ('qwen3:4b', t('Qwen 3 4B  - leger, ~2,6 Go, va sur presque tout (recommande)',
+                   'Qwen 3 4B  - light, ~2.6 GB, runs on almost anything (recommended)')),
+    ('qwen3:8b', t('Qwen 3 8B  - plus intelligent, ~5,2 Go, carte graphique 8 Go+',
+                   'Qwen 3 8B  - smarter, ~5.2 GB, 8 GB+ graphics card')),
+    ('gemma3:4b', t('Gemma 3 4B - alternative, ~3,3 Go', 'Gemma 3 4B - alternative, ~3.3 GB')),
 ]
 
 
@@ -118,7 +120,7 @@ def find_game():
 def pick_folder():
     script = ("Add-Type -AssemblyName System.Windows.Forms;"
               "$f = New-Object System.Windows.Forms.FolderBrowserDialog;"
-              "$f.Description = 'Choisis le dossier de Fallout 2 (celui avec master.dat)';"
+              "$f.Description = '" + t('Choisis le dossier de Fallout 2 (celui avec master.dat)', 'Choose the Fallout 2 folder (the one with master.dat)') + "';"
               "if ($f.ShowDialog() -eq 'OK') { $f.SelectedPath }")
     try:
         out = subprocess.run(['powershell', '-NoProfile', '-STA', '-Command', script],
@@ -129,14 +131,14 @@ def pick_folder():
 
 
 def install_game_files(source):
-    print(f'\nCopie des fichiers de ton Fallout 2 depuis :\n  {source}')
+    print(t('\nCopie des fichiers de ton Fallout 2 depuis :', '\nCopying the files of your Fallout 2 from:') + f'\n  {source}')
     for name in ['master.dat', 'critter.dat']:
         src = source / name
         dest = GAME / name
         if dest.is_file() and dest.stat().st_size == src.stat().st_size:
-            print(f'  {name} : deja la')
+            print(f'  {name} : ' + t('deja la', 'already there'))
             continue
-        print(f'  {name} ({src.stat().st_size // 2**20} Mo)...')
+        print(f'  {name} ({src.stat().st_size // 2**20} ' + t('Mo', 'MB') + ')...')
         shutil.copyfile(src, dest)
     music_src = next((p for p in [source / 'data/sound/music', source / 'sound/music'] if p.is_dir()), None)
     music_dest = GAME / 'data/sound/music'
@@ -147,32 +149,35 @@ def install_game_files(source):
             if f.is_file() and not (music_dest / f.name).exists():
                 shutil.copyfile(f, music_dest / f.name)
                 copied += 1
-    print(f'  musique : {copied} fichiers copies' if music_src else '  musique : introuvable (le jeu marche sans)')
+    print(t(f'  musique : {copied} fichiers copies', f'  music: {copied} files copied') if music_src
+          else t('  musique : introuvable (le jeu marche sans)', '  music: not found (the game works without it)'))
 
 
 def setup_game():
-    title('1/3  Ton jeu Fallout 2')
+    title(t('1/3  Ton jeu Fallout 2', '1/3  Your Fallout 2 game'))
     if (GAME / 'master.dat').is_file() and (GAME / 'critter.dat').is_file() \
-            and not yes('Les fichiers du jeu sont deja installes. Les recopier?', default=False):
+            and not yes(t('Les fichiers du jeu sont deja installes. Les recopier?', 'The game files are already installed. Copy them again?'), default=False):
         return
     source = find_game()
     if source:
-        print(f'Trouve : {source}')
-        if not yes('Utiliser ce dossier?'):
+        print(t('Trouve : ', 'Found: ') + str(source))
+        if not yes(t('Utiliser ce dossier?', 'Use this folder?')):
             source = None
     while source is None:
-        print("\nJe n'ai pas trouve Fallout 2 automatiquement.")
-        print("Dans le lanceur Epic : clic sur les ... de Fallout 2 > Gerer > icone de dossier.")
-        input('Appuie sur Entree pour choisir le dossier...')
+        print(t("\nJe n'ai pas trouve Fallout 2 automatiquement.", "\nI couldn't find Fallout 2 automatically."))
+        print(t("Dans le lanceur Epic : clic sur les ... de Fallout 2 > Gerer > icone de dossier.",
+                "In the Epic launcher: click the ... of Fallout 2 > Manage > folder icon."))
+        input(t('Appuie sur Entree pour choisir le dossier...', 'Press Enter to choose the folder...'))
         source = look_inside(pick_folder())
-        if source is None and not yes('Pas de master.dat + critter.dat la-dedans. Reessayer?'):
-            fatal("Il faut ta copie de Fallout 2 pour jouer. Relance 'Wasteland - Configurer' plus tard.")
+        if source is None and not yes(t('Pas de master.dat + critter.dat la-dedans. Reessayer?', 'No master.dat + critter.dat in there. Try again?')):
+            fatal(t("Il faut ta copie de Fallout 2 pour jouer. Relance 'Wasteland - Configurer' plus tard.",
+                    "You need your copy of Fallout 2 to play. Run 'Wasteland - Setup' again later."))
     install_game_files(source)
 
 
 def pull_model(name):
     import urllib.request
-    print(f'\nTelechargement de {name} (ca peut prendre plusieurs minutes)...')
+    print(t(f'\nTelechargement de {name} (ca peut prendre plusieurs minutes)...', f'\nDownloading {name} (this can take several minutes)...'))
     req = urllib.request.Request(OLLAMA + '/api/pull', data=json.dumps({'name': name}).encode(),
                                  headers={'Content-Type': 'application/json'})
     last = ''
@@ -183,7 +188,7 @@ def pull_model(name):
             except ValueError:
                 continue
             if msg.get('error'):
-                print('\n  Erreur :', msg['error'])
+                print(t('\n  Erreur :', '\n  Error:'), msg['error'])
                 return False
             status = msg.get('status', '')
             if msg.get('total'):
@@ -196,42 +201,49 @@ def pull_model(name):
 
 
 def setup_ai(settings):
-    title('2/3  PNJ avec IA (optionnel)')
-    print('Avec Ollama, les personnages repondent a ce que tu leur ecris (option [Speak freely]')
-    print("dans les dialogues). Sans Ollama, le jeu est normal.")
+    title(t('2/3  PNJ avec IA (optionnel)', '2/3  AI NPCs (optional)'))
+    print(t('Avec Ollama, les personnages repondent a ce que tu leur ecris (option [Speak freely]\n'
+            'dans les dialogues). Sans Ollama, le jeu est normal.',
+            'With Ollama, characters answer whatever you type to them (the [Speak freely] option\n'
+            'in dialogues). Without Ollama, the game is the normal one.'))
     if ollama_exe() is None and ollama_models() is None:
-        print('\nOllama n\'est pas installe : IA desactivee.')
-        print('Pour l\'activer plus tard : installe Ollama (https://ollama.com), puis')
-        print('lance "Wasteland - Configurer" dans le menu Demarrer.')
+        print(t('\nOllama n\'est pas installe : IA desactivee.\n'
+                'Pour l\'activer plus tard : installe Ollama (https://ollama.com), puis\n'
+                'lance "Wasteland - Configurer" dans le menu Demarrer.',
+                '\nOllama is not installed: AI is off.\n'
+                'To turn it on later: install Ollama (https://ollama.com), then\n'
+                'run "Wasteland - Setup" from the Start menu.'))
         settings['ai'] = False
         return
     if not start_ollama():
-        print('\nOllama est installe mais ne repond pas. Ouvre Ollama puis relance la configuration.')
+        print(t('\nOllama est installe mais ne repond pas. Ouvre Ollama puis relance la configuration.',
+                '\nOllama is installed but not answering. Open Ollama, then run the setup again.'))
         settings['ai'] = False
         return
-    if not yes('\nOllama detecte. Activer les PNJ avec IA?'):
+    if not yes(t('\nOllama detecte. Activer les PNJ avec IA?', '\nOllama found. Turn on AI NPCs?')):
         settings['ai'] = False
         return
     installed = ollama_models() or []
-    choices = [(m, d + ('  [deja installe]' if m in installed else '')) for m, d in MODELS]
-    choices += [(m, m + '  [deja installe]') for m in installed
+    already = t('  [deja installe]', '  [already installed]')
+    choices = [(m, d + (already if m in installed else '')) for m, d in MODELS]
+    choices += [(m, m + already) for m in installed
                 if m not in dict(MODELS) and not any(x in m for x in ('embed', 'minilm', ':cloud'))]
-    print('\nQuel modele?')
+    print(t('\nQuel modele?', '\nWhich model?'))
     for i, (_, label) in enumerate(choices, 1):
         print(f'  {i}. {label}')
     current = settings.get('model')
     default = next((str(i) for i, (m, _) in enumerate(choices, 1) if m == current), '1')
     while True:
-        pick = ask('Numero', default)
+        pick = ask(t('Numero', 'Number'), default)
         if pick.isdigit() and 1 <= int(pick) <= len(choices):
             model = choices[int(pick) - 1][0]
             break
     if model not in installed and not pull_model(model):
-        print('Telechargement rate : IA desactivee pour l\'instant.')
+        print(t('Telechargement rate : IA desactivee pour l\'instant.', 'Download failed: AI is off for now.'))
         settings['ai'] = False
         return
     settings.update(ai=True, model=model)
-    print(f'\nIA activee avec {model}.')
+    print(t(f'\nIA activee avec {model}.', f'\nAI on with {model}.'))
 
 
 def apply_pc_config(settings):
@@ -245,8 +257,11 @@ def apply_pc_config(settings):
 
 def main():
     os.system('title Wasteland Reborn - Configuration')
-    print('WASTELAND REBORN - Fallout 2 Restoration Project + PNJ avec IA')
+    print(t('WASTELAND REBORN - Fallout 2 Restoration Project + PNJ avec IA',
+            'WASTELAND REBORN - Fallout 2 Restoration Project + AI NPCs'))
     settings = load_settings()
+    settings['lang'] = LANG
+    save_settings(settings)
     setup_game()
     setup_ai(settings)
     save_settings(settings)
@@ -255,10 +270,10 @@ def main():
     import phone
     phone.run(interactive_end=False)
 
-    title('Fini!')
-    print('Lance le jeu avec l\'icone "Wasteland Reborn" sur le bureau.')
+    title(t('Fini!', 'Done!'))
+    print(t('Lance le jeu avec l\'icone "Wasteland Reborn" sur le bureau.', 'Start the game with the "Wasteland Reborn" icon on the desktop.'))
     if settings.get('ai'):
-        print('En dialogue, choisis l\'option de parler librement et ecris ce que tu veux.')
+        print(t('En dialogue, choisis [Speak freely] et ecris ce que tu veux.', 'In dialogues, pick [Speak freely] and type whatever you want.'))
     pause()
 
 

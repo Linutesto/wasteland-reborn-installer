@@ -38,6 +38,22 @@ def save_settings(settings):
     SETTINGS.write_text(json.dumps(settings, indent=2), encoding='utf-8')
 
 
+def _lang():
+    """'en' or 'fr': --lang=xx (the installer passes the language picked in
+    its first screen), else the one saved by the first configuration."""
+    for arg in sys.argv[1:]:
+        if arg.startswith('--lang='):
+            return 'fr' if arg[7:].lower().startswith('fr') else 'en'
+    return load_settings().get('lang', 'en')
+
+
+LANG = _lang()
+
+
+def t(fr, en):
+    return fr if LANG == 'fr' else en
+
+
 def token():
     if not TOKEN.is_file():
         USERDATA.mkdir(parents=True, exist_ok=True)
@@ -139,12 +155,12 @@ def ask(prompt, default=None):
 
 
 def yes(prompt, default=True):
-    answer = ask(prompt + (' (O/n)' if default else ' (o/N)')).lower()
+    answer = ask(prompt + t(' (O/n)' if default else ' (o/N)', ' (Y/n)' if default else ' (y/N)')).lower()
     return default if not answer else answer[0] in 'oy'
 
 
 def pause():
-    ask('\nAppuie sur Entree pour fermer')
+    ask(t('\nAppuie sur Entree pour fermer', '\nPress Enter to close'))
 
 
 def title(text):
@@ -152,6 +168,6 @@ def title(text):
 
 
 def fatal(text):
-    print('\n[ERREUR] ' + text)
+    print(t('\n[ERREUR] ', '\n[ERROR] ') + text)
     pause()
     sys.exit(1)

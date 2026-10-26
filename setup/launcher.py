@@ -11,7 +11,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (BRAIN, BRAIN_PORT, GAME, NO_WINDOW, OLLAMA, PYTHON, USERDATA, brain_up,
-                    http_json, lan_ip, load_settings, start_ollama, token)
+                    http_json, lan_ip, load_settings, start_ollama, t, token)
 
 
 def message(text):
@@ -46,16 +46,18 @@ def main():
     settings = load_settings()
     USERDATA.mkdir(parents=True, exist_ok=True)
     if not (GAME / 'master.dat').is_file():
-        message("Le jeu n'est pas encore configure.\nLance 'Wasteland - Configurer' dans le menu Demarrer.")
+        message(t("Le jeu n'est pas encore configure.\nLance 'Wasteland - Configurer' dans le menu Demarrer.",
+                  "The game is not set up yet.\nRun 'Wasteland - Setup' from the Start menu."))
         return
     brain = None
     if settings.get('ai') and settings.get('model'):
         if not start_ollama():
             if server_only:
-                print("Ollama ne repond pas : ouvre Ollama puis relance.")
+                print(t('Ollama ne repond pas : ouvre Ollama puis relance.', 'Ollama is not answering: open Ollama, then try again.'))
                 input()
                 return
-            message("Ollama ne repond pas : le jeu demarre sans IA.\n(Ouvre Ollama avant le jeu pour avoir l'IA.)")
+            message(t("Ollama ne repond pas : le jeu demarre sans IA.\n(Ouvre Ollama avant le jeu pour avoir l'IA.)",
+                      "Ollama is not answering: the game starts without AI.\n(Open Ollama before the game to get the AI.)"))
         elif not brain_up():
             brain = start_brain(settings, visible=server_only)
             threading.Thread(target=warm_up, args=(settings['model'],), daemon=True).start()
@@ -64,22 +66,22 @@ def main():
                     break
                 time.sleep(0.25)
     elif server_only:
-        print("L'IA n'est pas activee. Lance 'Wasteland - Configurer' pour l'activer.")
+        print(t("L'IA n'est pas activee. Lance 'Wasteland - Configurer' pour l'activer.", "The AI is off. Run 'Wasteland - Setup' to turn it on."))
         input()
         return
 
     if server_only:
         import tailscale
         ts = tailscale.pc_ip() if tailscale.exe() else None
-        print(f"\nServeur IA pour le telephone : http://{lan_ip()}:{BRAIN_PORT}"
-              + (f"  (Tailscale : http://{ts}:{BRAIN_PORT})" if ts else ""))
-        print("Laisse cette fenetre ouverte pendant que tu joues sur le telephone.")
-        print("Ferme-la pour arreter.\n")
+        print(t('\nServeur IA pour le telephone : ', '\nAI server for the phone: ') + f'http://{lan_ip()}:{BRAIN_PORT}'
+              + (f'  (Tailscale: http://{ts}:{BRAIN_PORT})' if ts else ''))
+        print(t('Laisse cette fenetre ouverte pendant que tu joues sur le telephone.\nFerme-la pour arreter.\n',
+                'Keep this window open while you play on the phone.\nClose it to stop.\n'))
         try:
             if brain:
                 brain.wait()
             else:
-                print("(Le serveur tournait deja.)")
+                print(t('(Le serveur tournait deja.)', '(The server was already running.)'))
                 input()
         except KeyboardInterrupt:
             pass

@@ -8,7 +8,7 @@ F=$(dirname "$W")
 T=$F/toolchain
 ENGINE=$F/src/imbaner_fallout2-ce-mobile
 PROFILE=$F/profiles/ai-rpu
-APK=${APK:-$F/apk/wasteland-reborn-20261025-arm64.apk}
+APK=${APK:-$F/apk/wasteland-reborn-20261026-arm64.apk}
 STAGE=$W/build/stage
 OUT=$W/dist/WastelandReborn-Setup.exe
 

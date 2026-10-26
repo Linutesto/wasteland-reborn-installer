@@ -14,7 +14,7 @@ import urllib.request
 import webbrowser
 from pathlib import Path
 
-from common import NO_WINDOW, ask
+from common import NO_WINDOW, ask, t
 
 MSI_URL = 'https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi'
 APK_URL = 'https://pkgs.tailscale.com/stable/tailscale-android-universal-latest.apk'
@@ -65,7 +65,7 @@ def phone_ip(adb):
 
 def download(url, suffix):
     path = Path(tempfile.gettempdir()) / ('wasteland-tailscale' + suffix)
-    print('  telechargement...')
+    print(t('  telechargement...', '  downloading...'))
     with urllib.request.urlopen(url, timeout=300) as r, open(path, 'wb') as f:
         shutil.copyfileobj(r, f, 1 << 20)
     return path
@@ -76,11 +76,12 @@ def ensure_pc():
     if pc_ip():
         return pc_ip()
     if not exe():
-        print('\nInstallation de Tailscale sur le PC (Windows va demander une autorisation)...')
+        print(t('\nInstallation de Tailscale sur le PC (Windows va demander une autorisation)...',
+                '\nInstalling Tailscale on the PC (Windows will ask for permission)...'))
         try:
             msi = download(MSI_URL, '.msi')
         except OSError as e:
-            print(f'  echec : {e}')
+            print(t('  echec : ', '  failed: ') + str(e))
             return None
         subprocess.run(['powershell', '-NoProfile', '-Command',
                         f"Start-Process msiexec -Verb RunAs -Wait -ArgumentList '/i \"{msi}\" /quiet /norestart'"],
@@ -90,11 +91,13 @@ def ensure_pc():
                 break
             time.sleep(1)
         if not exe():
-            print('  Tailscale ne s\'est pas installe (autorisation refusee?).')
+            print(t('  Tailscale ne s\'est pas installe (autorisation refusee?).', '  Tailscale did not install (permission refused?).'))
             return None
         time.sleep(5)  # the service starts after the install
-    print('\nConnexion de Tailscale sur le PC : une page web va s\'ouvrir.')
-    print('Connecte-toi (Google, Microsoft...). Utilise le MEME compte sur le telephone ensuite.')
+    print(t('\nConnexion de Tailscale sur le PC : une page web va s\'ouvrir.\n'
+            'Connecte-toi (Google, Microsoft...). Utilise le MEME compte sur le telephone ensuite.',
+            '\nSigning Tailscale in on the PC: a web page will open.\n'
+            'Log in (Google, Microsoft...). Use the SAME account on the phone afterwards.'))
     proc = subprocess.Popen([exe(), 'up', '--unattended'], stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, text=True, creationflags=NO_WINDOW)
     opened = False
@@ -111,7 +114,8 @@ def ensure_pc():
     if proc.poll() is None:
         proc.terminate()
     ip = pc_ip()
-    print(f'  PC connecte a Tailscale : {ip}' if ip else '  Tailscale pas connecte sur le PC.')
+    print(t('  PC connecte a Tailscale : ', '  PC connected to Tailscale: ') + ip if ip
+          else t('  Tailscale pas connecte sur le PC.', '  Tailscale not connected on the PC.'))
     return ip
 
 
@@ -122,36 +126,40 @@ def ensure_phone(adb):
         return ip if ip and ip in tailnet_ips() else None
 
     if joined():
-        print('  Telephone deja connecte a Tailscale.')
+        print(t('  Telephone deja connecte a Tailscale.', '  Phone already connected to Tailscale.'))
         return True
     if not adb('shell', 'pm', 'path', ANDROID_PACKAGE, check=False):
-        print('\nInstallation de Tailscale sur le telephone...')
+        print(t('\nInstallation de Tailscale sur le telephone...', '\nInstalling Tailscale on the phone...'))
         try:
             apk = download(APK_URL, '.apk')
         except OSError as e:
-            print(f'  echec : {e}')
+            print(t('  echec : ', '  failed: ') + str(e))
             return False
         out = adb('install', '-r', apk, check=False, timeout=300)
         if 'Success' not in out:
-            print('  echec : ' + out[-200:])
+            print(t('  echec : ', '  failed: ') + out[-200:])
             return False
     adb('shell', 'monkey', '-p', ANDROID_PACKAGE, '-c', 'android.intent.category.LAUNCHER', '1', check=False)
-    print("""
+    print(t("""
 Sur le telephone, l'application Tailscale vient de s'ouvrir :
   - connecte-toi avec le MEME compte que sur le PC,
   - accepte la demande de connexion VPN (c'est Tailscale).
-J'attends que le telephone apparaisse (Entree pour passer)...""")
+J'attends que le telephone apparaisse (Entree pour passer)...""", """
+The Tailscale app just opened on the phone:
+  - log in with the SAME account as on the PC,
+  - accept the VPN connection request (that's Tailscale).
+Waiting for the phone to show up (Enter to skip)..."""))
     import threading
     skipped = threading.Event()
     threading.Thread(target=lambda: (ask(''), skipped.set()), daemon=True).start()
     deadline = time.time() + LOGIN_WAIT_S
     while time.time() < deadline and not skipped.is_set():
         if joined():
-            print('  Telephone connecte a Tailscale.')
+            print(t('  Telephone connecte a Tailscale.', '  Phone connected to Tailscale.'))
             return True
         time.sleep(2)
     if phone_ip(adb):
-        print('  Le telephone est sur Tailscale, mais pas avec le meme compte que le PC.')
+        print(t('  Le telephone est sur Tailscale, mais pas avec le meme compte que le PC.', '  The phone is on Tailscale, but not with the same account as the PC.'))
     else:
-        print('  Telephone pas encore connecte a Tailscale.')
+        print(t('  Telephone pas encore connecte a Tailscale.', '  Phone not connected to Tailscale yet.'))
     return False

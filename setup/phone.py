@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (BRAIN_PORT, GAME, NO_WINDOW, ROOT, ask, cfg_set, fatal, lan_ip, load_settings,
-                    pause, save_settings, title, token, yes)
+                    pause, save_settings, t, title, token, yes)
 
 PACKAGE = 'io.github.imbaner.fallout2ce.debug'
 ACTIVITY = PACKAGE + '/com.alexbatalov.fallout2ce.MainActivity'
@@ -38,12 +38,12 @@ def find_adb(offer_download=True):
             return str(c)
     if not offer_download:
         return None
-    print("Installation d'adb (outils Android officiels de Google, ~7 Mo)...")
+    print(t("Installation d'adb (outils Android officiels de Google, ~7 Mo)...", 'Installing adb (official Android tools from Google, ~7 MB)...'))
     try:
         with urllib.request.urlopen(TOOLS_URL, timeout=120) as r:
             zipfile.ZipFile(io.BytesIO(r.read())).extractall(ROOT)
     except OSError as e:
-        print(f'  echec : {e}')
+        print(t('  echec : ', '  failed: ') + str(e))
         return None
     print('  OK')
     return str(local) if local.is_file() else None
@@ -78,7 +78,7 @@ def pairing_address():
 def pair_new():
     """Walks through wireless-debugging pairing; returns the new device's serial or None."""
     before = set(devices())
-    print("""
+    print(t("""
 Sur le telephone :
   1. Parametres > A propos du telephone > tape 7 fois sur "Numero de build"
      (active les Options pour les developpeurs).
@@ -86,40 +86,50 @@ Sur le telephone :
      (le telephone et le PC doivent etre sur le meme Wi-Fi).
   3. Touche "Debogage sans fil", puis "Associer l'appareil avec un code d'association".
      Ca affiche une adresse (ex. 192.168.1.42:37123) et un code a 6 chiffres.
-(Ou branche le telephone par cable USB avec le "Debogage USB" active.)""")
+(Ou branche le telephone par cable USB avec le "Debogage USB" active.)""", """
+On the phone:
+  1. Settings > About phone > tap "Build number" 7 times
+     (turns on Developer options).
+  2. Settings > System > Developer options > "Wireless debugging": ON
+     (the phone and the PC must be on the same Wi-Fi).
+  3. Tap "Wireless debugging", then "Pair device with pairing code".
+     It shows an address (e.g. 192.168.1.42:37123) and a 6-digit code.
+(Or plug the phone in with a USB cable, with "USB debugging" on.)"""))
     while True:
-        input("\nQuand le code est affiche (ou le cable branche), appuie sur Entree...")
+        input(t("\nQuand le code est affiche (ou le cable branche), appuie sur Entree...", '\nWhen the code is shown (or the cable plugged in), press Enter...'))
         new = [d for d in devices() if d not in before]
         if new:
             return new[0]
         addr = pairing_address()
         if addr:
-            print(f'Telephone trouve : {addr}')
+            print(t('Telephone trouve : ', 'Phone found: ') + addr)
         else:
-            addr = ask("Adresse IP:port affichee sous le code (q = annuler)")
+            addr = ask(t('Adresse IP:port affichee sous le code (q = annuler)', 'IP address:port shown under the code (q = cancel)'))
         if addr.lower() == 'q':
             return None
         if addr:
-            print(adb('pair', addr, ask('Code a 6 chiffres'), check=False, timeout=30))
+            print(adb('pair', addr, ask(t('Code a 6 chiffres', '6-digit code')), check=False, timeout=30))
             time.sleep(2)
             new = [d for d in mdns_connect() if d not in before]
             if not new:
-                print('\nSur l\'ecran "Debogage sans fil", lis la ligne "Adresse IP et port"')
-                print('(ce n\'est PAS le meme port que pour l\'association).')
-                addr = ask('Adresse IP et port')
+                print(t('\nSur l\'ecran "Debogage sans fil", lis la ligne "Adresse IP et port"\n'
+                        '(ce n\'est PAS le meme port que pour l\'association).',
+                        '\nOn the "Wireless debugging" screen, read the "IP address & Port" line\n'
+                        '(it is NOT the same port as for pairing).'))
+                addr = ask(t('Adresse IP et port', 'IP address and port'))
                 if addr:
                     print(adb('connect', addr, check=False, timeout=15))
                 new = [d for d in devices() if d not in before]
             if new:
                 return new[0]
-        if not yes('Pas de telephone connecte. Reessayer?'):
+        if not yes(t('Pas de telephone connecte. Reessayer?', 'No phone connected. Try again?')):
             return None
 
 
 def describe(serial):
     os.environ['ANDROID_SERIAL'] = serial
     model = adb('shell', 'getprop', 'ro.product.model', check=False) or serial
-    return model + ('  [Wasteland deja installe]' if installed() else '')
+    return model + (t('  [Wasteland deja installe]', '  [Wasteland already installed]') if installed() else '')
 
 
 def choose_phone():
@@ -128,13 +138,13 @@ def choose_phone():
     found = devices() or mdns_connect()
     entries = [(serial, describe(serial)) for serial in found]
     os.environ.pop('ANDROID_SERIAL', None)
-    print('\nInstaller Wasteland sur quel telephone?')
+    print(t('\nInstaller Wasteland sur quel telephone?', '\nInstall Wasteland on which phone?'))
     for i, (serial, label) in enumerate(entries, 1):
         print(f'  {i}. {label}')
-    print(f'  {len(entries) + 1}. Associer un autre telephone (debogage sans fil)')
-    print(f'  {len(entries) + 2}. Passer')
+    print(f'  {len(entries) + 1}. ' + t('Associer un autre telephone (debogage sans fil)', 'Pair another phone (wireless debugging)'))
+    print(f'  {len(entries) + 2}. ' + t('Passer', 'Skip'))
     while True:
-        pick = ask('Choix', str(len(entries) + 2))
+        pick = ask(t('Choix', 'Choice'), str(len(entries) + 2))
         if pick.isdigit() and 1 <= int(pick) <= len(entries) + 2:
             break
     pick = int(pick)
@@ -148,7 +158,7 @@ def push(local, remote):
     r = subprocess.run([ADB, 'push', '--sync', str(local), remote], capture_output=True, text=True,
                        creationflags=NO_WINDOW)
     if r.returncode != 0:
-        print('     (avertissement) ' + (r.stderr or r.stdout).strip()[-300:])
+        print(t('     (avertissement) ', '     (warning) ') + (r.stderr or r.stdout).strip()[-300:])
         return False
     return True
 
@@ -164,15 +174,22 @@ def phone_cfg(dest, settings):
     }
     lan = lan_ip()
     if settings.get('ai'):
-        print("""
+        print(t("""
 L'IA du telephone passe par ce PC : il doit etre allume avec
 "Wasteland - Serveur IA (telephone)" ouvert. Sinon les PNJ parlent sans IA.
 
 IA sur le telephone :
   1. Partout (installe et configure Tailscale sur le PC et le telephone)
   2. Seulement a la maison (meme Wi-Fi que le PC)
-  3. Pas d'IA sur le telephone""")
-        pick = ask('Choix', '1')
+  3. Pas d'IA sur le telephone""", """
+The phone's AI runs on this PC: it must be on, with
+"Wasteland - AI server (phone)" open. Otherwise NPCs talk without AI.
+
+AI on the phone:
+  1. Everywhere (installs and sets up Tailscale on the PC and the phone)
+  2. Only at home (same Wi-Fi as the PC)
+  3. No AI on the phone"""))
+        pick = ask(t('Choix', 'Choice'), '1')
         server_ip = None
         if pick == '1':
             import tailscale
@@ -180,8 +197,10 @@ IA sur le telephone :
             if ts_ip and tailscale.ensure_phone(adb):
                 server_ip = ts_ip
             else:
-                print('Tailscale pas pret : l\'IA du telephone marchera a la maison (meme Wi-Fi).')
-                print('Pour reessayer : menu Demarrer > "Wasteland - Installer sur le telephone".')
+                print(t('Tailscale pas pret : l\'IA du telephone marchera a la maison (meme Wi-Fi).\n'
+                        'Pour reessayer : menu Demarrer > "Wasteland - Installer sur le telephone".',
+                        'Tailscale not ready: the phone\'s AI will work at home (same Wi-Fi).\n'
+                        'To try again: Start menu > "Wasteland - Install on phone".'))
                 server_ip = lan
         elif pick == '2':
             server_ip = lan
@@ -203,7 +222,8 @@ def allow_firewall():
     rule = (f'netsh advfirewall firewall delete rule name="Wasteland IA" >nul 2>&1 & '
             f'netsh advfirewall firewall add rule name="Wasteland IA" dir=in action=allow '
             f'protocol=TCP localport={BRAIN_PORT} remoteip=localsubnet,100.64.0.0/10')
-    print('Windows va demander une autorisation pour ouvrir le port de l\'IA (reseau local et Tailscale seulement).')
+    print(t('Windows va demander une autorisation pour ouvrir le port de l\'IA (reseau local et Tailscale seulement).',
+            'Windows will ask for permission to open the AI port (local network and Tailscale only).'))
     subprocess.run(['powershell', '-NoProfile', '-Command',
                     f"Start-Process cmd -Verb RunAs -WindowStyle Hidden -Wait -ArgumentList '/c {rule}'"],
                    creationflags=NO_WINDOW)
@@ -219,38 +239,43 @@ def run(interactive_end=True):
     """Returns 'done' or 'skipped'."""
     global ADB
     os.system('title Wasteland Reborn - Telephone')
-    title('Telephone Android (optionnel)')
+    title(t('Telephone Android (optionnel)', 'Android phone (optional)'))
     if not (GAME / 'master.dat').is_file():
-        fatal("Les fichiers du jeu ne sont pas installes. Lance d'abord 'Wasteland - Configurer'.")
+        fatal(t("Les fichiers du jeu ne sont pas installes. Lance d'abord 'Wasteland - Configurer'.",
+                "The game files are not installed. Run 'Wasteland - Setup' first."))
     ADB = find_adb()
     if not ADB:
-        print("Impossible d'installer adb (pas d'Internet?). Reessaie plus tard via le menu Demarrer.")
+        print(t("Impossible d'installer adb (pas d'Internet?). Reessaie plus tard via le menu Demarrer.",
+                "Couldn't install adb (no Internet?). Try again later from the Start menu."))
         if interactive_end:
             pause()
         return 'skipped'
     serial = choose_phone()
     if not serial:
-        print('Plus tard : menu Demarrer > "Wasteland - Installer sur le telephone".')
+        print(t('Plus tard : menu Demarrer > "Wasteland - Installer sur le telephone".', 'Later: Start menu > "Wasteland - Install on phone".'))
         if interactive_end:
             pause()
         return 'skipped'
     os.environ['ANDROID_SERIAL'] = serial
-    print(f"Telephone : {adb('shell', 'getprop', 'ro.product.model', check=False) or serial}")
+    print(t('Telephone : ', 'Phone: ') + (adb('shell', 'getprop', 'ro.product.model', check=False) or serial))
     abi = adb('shell', 'getprop', 'ro.product.cpu.abi', check=False)
     if abi and 'arm64' not in abi:
-        fatal(f'Ce telephone ({abi}) n\'est pas compatible : il faut un Android 64 bits (arm64).')
+        fatal(t(f'Ce telephone ({abi}) n\'est pas compatible : il faut un Android 64 bits (arm64).',
+                f'This phone ({abi}) is not supported: it needs 64-bit Android (arm64).'))
 
     settings = load_settings()
-    print('\nInstallation de l\'application "Wasteland"...')
+    print(t('\nInstallation de l\'application "Wasteland"...', '\nInstalling the "Wasteland" app...'))
     out = adb('install', '-r', APK, check=False, timeout=300)
     if 'Success' not in out:
-        fatal('Installation refusee : ' + out[-300:] +
-              '\nSur certains telephones (Xiaomi...), active aussi "Installer via USB" dans les Options pour les developpeurs.')
+        fatal(t('Installation refusee : ', 'Install refused: ') + out[-300:] +
+              t('\nSur certains telephones (Xiaomi...), active aussi "Installer via USB" dans les Options pour les developpeurs.',
+                '\nOn some phones (Xiaomi...), also turn on "Install via USB" in Developer options.'))
     adb('shell', 'am', 'start', '-n', ACTIVITY, check=False)  # creates its storage folder
     time.sleep(4)
     adb('shell', 'am', 'force-stop', PACKAGE, check=False)
 
-    print('\nCopie du jeu (~1,3 Go par Wi-Fi : quelques minutes, garde l\'ecran allume)...')
+    print(t('\nCopie du jeu (~1,3 Go par Wi-Fi : quelques minutes, garde l\'ecran allume)...',
+            '\nCopying the game (~1.3 GB over Wi-Fi: a few minutes, keep the screen on)...'))
     profile = f'{PHONE}/profiles/{PROFILE}'
     adb('shell', 'mkdir', '-p', f'{profile}/data', check=False)
     ok = push(GAME / 'master.dat', PHONE + '/') & push(GAME / 'critter.dat', PHONE + '/')
@@ -270,11 +295,14 @@ def run(interactive_end=True):
         ok &= push(active, PHONE + '/')
     save_settings(settings)
     if not ok:
-        print('\nCertains fichiers n\'ont pas pu etre copies (voir plus haut). Relance au besoin.')
+        print(t('\nCertains fichiers n\'ont pas pu etre copies (voir plus haut). Relance au besoin.',
+                '\nSome files could not be copied (see above). Run it again if needed.'))
 
     adb('shell', 'am', 'start', '-n', ACTIVITY, check=False)
-    print('\nC\'est installe! L\'application "Wasteland" (icone verte) vient de s\'ouvrir.')
-    print('Tu peux maintenant debrancher / desactiver le debogage sans fil.')
+    print(t('\nC\'est installe! L\'application "Wasteland" (icone verte) vient de s\'ouvrir.\n'
+            'Tu peux maintenant debrancher / desactiver le debogage sans fil.',
+            '\nInstalled! The "Wasteland" app (green icon) just opened.\n'
+            'You can now unplug / turn off wireless debugging.'))
     if interactive_end:
         pause()
     return 'done'

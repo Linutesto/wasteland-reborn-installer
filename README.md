@@ -1,3 +1,61 @@
+# Wasteland Reborn
+
+**Fallout 2 on your Android phone**, with the **Restoration Project (RPU)** +
+FO2Tweaks on the open-source **Fallout 2 Community Edition** engine (mobile
+fork), a full touch UI, and **NPCs you can talk to freely through a local AI**
+(optional, via Ollama).
+
+*[Version française plus bas](#wasteland-reborn--installateur-windows)*
+
+## ⬇️ Download
+
+📱 **Android: [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)** (≈ 8 MB). If the Wasteland app is already installed, this is an update: your saves stay. The game itself (your Fallout 2 files) is imported in the app, or installed from the PC with the Windows installer.
+
+💻 **Windows installer: [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 MB, Windows 10/11 64-bit, English or French). It sets everything up and pushes the game to your phone.
+
+## You need
+
+- **Your own copy of Fallout 2** installed (Epic, Steam or GOG). No game files
+  are included: the setup finds your game and copies `master.dat`,
+  `critter.dat` and the music.
+- An Android 64-bit phone (wireless debugging on, for the install from the PC).
+- Optional: [Ollama](https://ollama.com) for the AI.
+
+## Install
+
+1. Run `WastelandReborn-Setup.exe` and pick English. Windows may show
+   "Windows protected your PC" (unsigned file) → **More info** → **Run anyway**.
+2. At the end a setup window asks about your game, the AI (if Ollama is
+   there), then a small phone menu (pick a phone, pair one with the 6-digit
+   code, or skip). adb (Google's official Android tool) is downloaded
+   automatically.
+3. Play on the phone (the **Wasteland** app). The desktop icon also starts it
+   on the PC with classic mouse controls.
+
+In dialogues, pick **[Speak freely]** and type whatever you want to the
+character.
+
+Start menu › Wasteland Reborn: *Setup* (turn the AI on later), *Install on
+phone*, *AI server (phone)*.
+
+**AI on the phone** runs on the PC (on, with *AI server* open). The menu offers
+"Everywhere": the setup installs and configures [Tailscale](https://tailscale.com)
+(free private VPN) on the PC and the phone; log in with **the same account** on
+both. Or "Only at home" (same Wi-Fi), or no AI on the phone. Without the
+server the game plays normally, offline.
+
+## Credits
+
+- [Fallout 2 CE](https://github.com/alexbatalov/fallout2-ce) and the
+  [mobile fork](https://github.com/imbaner/fallout2-ce-mobile)
+- [Restoration Project (RPU)](https://github.com/BGforgeNet/Fallout2_Restoration_Project)
+  and [FO2Tweaks](https://github.com/BGforgeNet/FO2tweaks) by BGforgeNet
+- Python (embeddable), NSIS, Ollama
+
+Fallout is a trademark of Bethesda Softworks. Unofficial fan project.
+
+---
+
 # Wasteland Reborn — installateur Windows
 
 Fallout 2 avec le **Restoration Project (RPU)** + FO2Tweaks, sur le moteur
@@ -9,7 +67,7 @@ Peut aussi installer le jeu sur un téléphone Android.
 
 📱 **Android : [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)** (≈ 8 Mo) — si l'app Wasteland est déjà installée, c'est une mise à jour : tes sauvegardes restent. Le jeu lui-même (fichiers de Fallout 2) s'importe dans l'app, ou s'installe depuis le PC avec l'installateur Windows.
 
-💻 **Windows : [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 Mo, Windows 10/11 64 bits)
+💻 **Windows : [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 Mo, Windows 10/11 64 bits, anglais ou français)
 
 ## Il te faut
 
@@ -21,7 +79,7 @@ Peut aussi installer le jeu sur un téléphone Android.
 
 ## Installation
 
-1. Lance `WastelandReborn-Setup.exe`. Windows peut afficher « Windows a
+1. Lance `WastelandReborn-Setup.exe` et choisis Français. Windows peut afficher « Windows a
    protégé votre ordinateur » (fichier non signé) → **Informations
    complémentaires** → **Exécuter quand même**.
 2. À la fin, une fenêtre de configuration te pose les questions :
