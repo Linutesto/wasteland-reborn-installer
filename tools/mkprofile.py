@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -114,6 +115,28 @@ def copy_tree(src_root, dest, skip=()):
     return n
 
 
+# The touch HUD's Highlight button reads sfall's [Highlighting] section:
+# containers, lootable corpses, people and (Wasteland engine) doors, stairs,
+# ladders and elevators too, not just items on the ground.
+HIGHLIGHT = {"Containers": "1", "Corpses": "1", "Critters": "1", "Scenery": "1", "OutlineColorScenery": "8"}
+
+
+def patch_highlighting(dest):
+    path = os.path.join(dest, "mods", "sfall-mods.ini")
+    with open(path, encoding="latin-1") as f:
+        text = f.read()
+    start = text.index("[Highlighting]")
+    end = text.find("\n[", start + 1)
+    end = len(text) if end < 0 else end
+    section = text[start:end]
+    for key, value in HIGHLIGHT.items():
+        section, n = re.subn(rf"(?m)^{key}=.*$", f"{key}={value}", section)
+        if n == 0:
+            section = section.rstrip("\r\n") + f"\n{key}={value}\n"
+    with open(path, "w", encoding="latin-1") as f:
+        f.write(text[:start] + section.rstrip("\r\n") + "\n\n" + text[end:].lstrip("\r\n"))
+
+
 def build(dest, no_download):
     with open(os.path.join(RECIPE, "manifest.json")) as f:
         m = json.load(f)
@@ -145,6 +168,7 @@ def build(dest, no_download):
 
     shutil.copy2(os.path.join(RECIPE, "fallout2.cfg"), os.path.join(dest, "fallout2.cfg"))
     log(f"overlay: {copy_tree(os.path.join(RECIPE, 'overlay'), dest)} files")
+    patch_highlighting(dest)
     write_locations(dest, "fallout2")
     log(f"done: {dest}")
 
