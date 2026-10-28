@@ -1,0 +1,125 @@
+name: Assemble verified Wasteland release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag
+        required: true
+        default: v1.1
+      manifest:
+        description: Uploaded chunk manifest asset
+        required: true
+        default: WastelandReborn-Setup.exe.manifest.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wasteland-assemble-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      TAG: ${{ inputs.tag }}
+      MANIFEST_ASSET: ${{ inputs.manifest }}
+    steps:
+      - name: Retrieve verified manifest and chunks, then assemble installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/chunks" "$RUNNER_TEMP/assembled"
+          gh release download "$TAG" -R "$REPO" -p "$MANIFEST_ASSET" -D "$RUNNER_TEMP/chunks"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, sys, time
+
+          root = pathlib.Path(os.environ['RUNNER_TEMP'])
+          chunks_dir = root / 'chunks'
+          manifest = json.loads((chunks_dir / os.environ['MANIFEST_ASSET']).read_text())
+          assert manifest['format'] == 'github-release-chunks-v1'
+          assert manifest['name'] == 'WastelandReborn-Setup.exe'
+          assert len(manifest['parts']) and len(manifest['parts']) <= 200
+          assert sum(p['size'] for p in manifest['parts']) == manifest['size']
+          output = root / 'assembled' / manifest['name']
+          full = hashlib.sha256()
+
+          def digest_file(path):
+              sha = hashlib.sha256()
+              with path.open('rb') as inp:
+                  while data := inp.read(1024 * 1024):
+                      sha.update(data)
+              return sha.hexdigest()
+
+          with output.open('wb') as out:
+              for i, part in enumerate(manifest['parts']):
+                  name = part['name']
+                  assert name == f"{manifest['name']}.part{i:03d}"
+                  path = chunks_dir / name
+                  for attempt in range(1, 6):
+                      if path.exists() and path.stat().st_size == part['size'] and digest_file(path) == part['sha256']:
+                          break
+                      path.unlink(missing_ok=True)
+                      try:
+                          subprocess.run(['gh', 'release', 'download', os.environ['TAG'], '-R', os.environ['REPO'], '-p', name, '-D', str(chunks_dir)], check=True, timeout=600)
+                      except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+                          print(f"Download attempt {attempt} failed for {name}: {error}", flush=True)
+                      if attempt == 5 and not (path.exists() and path.stat().st_size == part['size'] and digest_file(path) == part['sha256']):
+                          sys.exit(f"Failed to download verified chunk {name}")
+                      time.sleep(2)
+                  with path.open('rb') as inp:
+                      while data := inp.read(1024 * 1024):
+                          full.update(data)
+                          out.write(data)
+                  print(f"Reassembled {i+1}/{len(manifest['parts'])}: {name}", flush=True)
+
+          assert output.stat().st_size == manifest['size']
+          assert full.hexdigest() == manifest['sha256'], 'Reconstructed file hash mismatch'
+          print(f"VERIFIED: {output.name} {output.stat().st_size} bytes sha256:{full.hexdigest()}", flush=True)
+          PY
+
+      - name: Upload single EXE and verify remote digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess, sys
+          root = os.environ['RUNNER_TEMP']
+          doc = json.load(open(f"{root}/chunks/{os.environ['MANIFEST_ASSET']}"))
+          target = f"sha256:{doc['sha256']}"
+          def asset():
+              raw = subprocess.check_output(['gh','release','view',os.environ['TAG'],'-R',os.environ['REPO'],'--json','assets'])
+              return next((a for a in json.loads(raw)['assets'] if a['name'] == doc['name']), None)
+          existing = asset()
+          if existing and existing.get('digest') != target:
+              sys.exit('Existing EXE asset has a different hash; refusing to replace')
+          if existing is None:
+              subprocess.run(['gh','release','upload',os.environ['TAG'],'-R',os.environ['REPO'],f"{root}/assembled/{doc['name']}"], check=True, timeout=900)
+          verified = asset()
+          if not verified or verified.get('digest') != target or verified['size'] != doc['size']:
+              sys.exit('Uploaded EXE digest/size mismatch: refusing to publish')
+          print('GitHub release EXE asset verified against original SHA-256',flush=True)
+          PY
+
+      - name: Publish verified release
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release edit "$TAG" -R "$REPO" --draft=false --latest
+          gh release view "$TAG" -R "$REPO" --json isDraft,url --jq '{isDraft,url}'
+
+      - name: Remove temporary chunk assets after publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          doc=json.load(open(f"{os.environ['RUNNER_TEMP']}/chunks/{os.environ['MANIFEST_ASSET']}"))
+          for part in doc['parts']:
+              subprocess.run(['gh','release','delete-asset',os.environ['TAG'],part['name'],'-R',os.environ['REPO'],'--yes'],check=False)
+          print('Temporary chunk cleanup attempted; manifest kept for integrity reference')
+          PY
