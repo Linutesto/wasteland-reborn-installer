@@ -20,6 +20,21 @@ Updating an installed app? Install the new APK over it — your saves stay.
 The two apps (`Wasteland` and `Wasteland HD`) are separate packages: they
 install side by side, each with its own files and saves.
 
+## 📖 Install guides
+
+Longer, step-by-step guides — one action per step, every button and menu
+quoted exactly as the program shows it (including the French ones):
+
+| Guide | What it covers |
+| --- | --- |
+| [Windows — English](docs/INSTALL-WINDOWS.md) | before you start, download + checksum, every installer page, the phone, HD art, AI NPCs, updating, backup, troubleshooting table |
+| [Windows — en français](docs/INSTALL-WINDOWS.fr.md) | même guide, en français (tutoiement) |
+| [Troubleshooting — English](docs/TROUBLESHOOTING.md) · [en français](docs/TROUBLESHOOTING.fr.md) | SmartScreen, antivirus, "game not found", phone not found/pairing/unauthorized, black screen, blank dialogue, no AI reply, HD download, space, Epic files |
+| [Linux — English](docs/INSTALL-LINUX.md) | the Linux path |
+
+The quick version also ships inside the installer as `README.txt` /
+`LISEZ-MOI.txt`.
+
 ## You need your own Fallout 2
 
 **No game files are included in anything you download here.** Fallout 2 is
@@ -186,6 +201,21 @@ Mise à jour d'une app déjà installée ? Installez l'APK par-dessus : tes
 sauvegardes restent. Les deux apps (`Wasteland` et `Wasteland HD`) sont des
 paquets distincts : elles coexistent, chacune avec ses fichiers et ses
 sauvegardes.
+
+## 📖 Guides d'installation
+
+Des guides pas à pas — une action par étape, chaque bouton et chaque menu
+recopié exactement comme le programme l'affiche :
+
+| Guide | Ce qu'il couvre |
+| --- | --- |
+| [Windows — en français](docs/INSTALL-WINDOWS.fr.md) | avant de commencer, téléchargement + somme de contrôle, chaque page de l'installation, le téléphone, l'art HD, les PNJ avec IA, mise à jour, sauvegardes, tableau de dépannage |
+| [Windows — English](docs/INSTALL-WINDOWS.md) | same guide, in English |
+| [Dépannage — en français](docs/TROUBLESHOOTING.fr.md) · [English](docs/TROUBLESHOOTING.md) | SmartScreen, antivirus, « jeu introuvable », téléphone introuvable/association/unauthorized, écran noir, texte vide, pas de réponse de l'IA, téléchargement HD, place, fichiers Epic |
+| [Linux — English](docs/INSTALL-LINUX.md) | le chemin Linux |
+
+La version courte est aussi dans l'installateur, dans `LISEZ-MOI.txt` /
+`README.txt`.
 
 ## Il te faut TA propre copie de Fallout 2
 
