@@ -13,3 +13,5 @@ __pycache__/
 # End-to-end Wine test: its own prefix, and the player's own game files
 /tests/
 /gamedata/
+.codex-linux.log
+__pycache__/
