@@ -17,6 +17,24 @@ INSTALLER
    questions : ton jeu, l'IA, puis le telephone.
 3. Joue avec l'icone « Wasteland Reborn » sur le bureau.
 
+EDITION HD / INSTALLATION SILENCIEUSE
+- WastelandRebornHD-Setup.exe s'installe a part, dans
+  %LOCALAPPDATA%\WastelandRebornHD. Sauvegardes et reglages restent separes
+  de l'edition classique.
+- Lance n'importe lequel des deux installateurs avec /S pour une installation
+  silencieuse : il cherche Fallout 2 (Epic, Steam ou GOG), copie le jeu si il
+  le trouve et saute la configuration IA/telephone. Ensuite, menu Demarrer >
+  « Wasteland - Configurer » pour la configurer normalement.
+- L'installateur HD essaie les packs d'art HD publies une fois le jeu trouve.
+  Sans connexion l'installation reussit quand meme : lis
+  userdata\setup-install.log dans le dossier d'installation, puis relance
+  « Wasteland - Configurer » quand les packs sont accessibles.
+- Desinstallation : les fichiers de l'app, le registre et les raccourcis
+  partent ; les sauvegardes (game\data\savegame) et les donnees IA restent.
+- Tests hors ligne : python3 -m unittest discover -s windows/tests -v
+- Sous Linux avec Wine/Xvfb, apres avoir construit les deux installateurs :
+  bash windows/tests/test_wine_install.sh (il saute si gamedata/ est absent).
+
 L'IA (si Ollama est installe)
 - En dialogue, choisis « [Speak freely] » et ecris ce que tu veux au
   personnage (en anglais, c'est la langue du jeu).

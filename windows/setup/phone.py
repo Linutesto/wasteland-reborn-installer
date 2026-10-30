@@ -5,6 +5,7 @@ profile to it, and points its AI at this PC when the AI is on.
 Nothing is installed without the player picking the phone in a menu.
 """
 import io
+import json
 import os
 import re
 import shutil
@@ -20,11 +21,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (BRAIN_PORT, GAME, NO_WINDOW, ROOT, ask, cfg_set, fatal, lan_ip, load_settings,
                     pause, save_settings, t, title, token, yes)
 
-PACKAGE = 'io.github.imbaner.fallout2ce.debug'
+def edition_config():
+    """HD and classic installers carry their own Android identities."""
+    path = ROOT / 'setup/edition.json'
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+EDITION = edition_config()
+PACKAGE = EDITION.get('package', 'io.github.imbaner.fallout2ce.debug')
+APP_NAME = EDITION.get('app_name', 'Wasteland')
 ACTIVITY = PACKAGE + '/com.alexbatalov.fallout2ce.MainActivity'
 PHONE = '/sdcard/Android/data/' + PACKAGE + '/files'
 PROFILE = 'rpu-plus'
-APK = ROOT / 'phone/wasteland.apk'
+APK = ROOT / EDITION.get('apk', 'phone/wasteland.apk')
 TOOLS_URL = 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip'
 ADB = None
 
@@ -172,6 +183,9 @@ def phone_cfg(dest, settings):
         'ui': {'skip_opening_movies': '2'},
         'ai': {'enabled': '0', 'server': '', 'token': '', 'timeout_ms': '45000', 'content_id': 'fallout2'},
     }
+    if EDITION.get('edition') == 'hd':
+        # The separate HD APK should use its own 2x art and a phone-sized cache.
+        values['graphics'] = {'hd_art': '1', 'hd_cache_mb': '256', 'dark_boost': '2'}
     lan = lan_ip()
     if settings.get('ai'):
         print(t("""
@@ -264,7 +278,7 @@ def run(interactive_end=True):
                 f'This phone ({abi}) is not supported: it needs 64-bit Android (arm64).'))
 
     settings = load_settings()
-    print(t('\nInstallation de l\'application "Wasteland"...', '\nInstalling the "Wasteland" app...'))
+    print(t(f'\nInstallation de "{APP_NAME}"...', f'\nInstalling "{APP_NAME}"...'))
     out = adb('install', '-r', APK, check=False, timeout=300)
     if 'Success' not in out:
         fatal(t('Installation refusee : ', 'Install refused: ') + out[-300:] +
@@ -279,7 +293,12 @@ def run(interactive_end=True):
     profile = f'{PHONE}/profiles/{PROFILE}'
     adb('shell', 'mkdir', '-p', f'{profile}/data', check=False)
     ok = push(GAME / 'master.dat', PHONE + '/') & push(GAME / 'critter.dat', PHONE + '/')
-    ok &= push(GAME / 'mods', profile + '/')
+    # Appearance and translations are part of RPU+, not stored under data/.
+    # Omission leaves the phone with an incomplete profile despite a good copy.
+    for name in ('mods', 'appearance', 'translations'):
+        source = GAME / name
+        if source.exists():
+            ok &= push(source, profile + '/')
     for entry in sorted((GAME / 'data').iterdir()):
         if entry.name.lower() != 'savegame':  # never overwrite the phone's saves
             ok &= push(entry, profile + '/data/')
@@ -299,9 +318,9 @@ def run(interactive_end=True):
                 '\nSome files could not be copied (see above). Run it again if needed.'))
 
     adb('shell', 'am', 'start', '-n', ACTIVITY, check=False)
-    print(t('\nC\'est installe! L\'application "Wasteland" (icone verte) vient de s\'ouvrir.\n'
+    print(t(f'\nC\'est installe! "{APP_NAME}" vient de s\'ouvrir.\n'
             'Tu peux maintenant debrancher / desactiver le debogage sans fil.',
-            '\nInstalled! The "Wasteland" app (green icon) just opened.\n'
+            f'\nInstalled! "{APP_NAME}" just opened.\n'
             'You can now unplug / turn off wireless debugging.'))
     if interactive_end:
         pause()

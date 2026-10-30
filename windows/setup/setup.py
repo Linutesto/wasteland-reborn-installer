@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from common import (GAME, LANG, OLLAMA, ask, cfg_set, fatal, http_json, load_settings, ollama_exe,
+from common import (GAME, LANG, OLLAMA, USERDATA, ask, cfg_set, fatal, http_json, load_settings, ollama_exe,
                     ollama_models, pause, save_settings, start_ollama, t, title, token, yes, BRAIN_PORT)
 
 MODELS = [
@@ -24,6 +24,7 @@ MODELS = [
                    'Qwen 3 8B  - smarter, ~5.2 GB, 8 GB+ graphics card')),
     ('gemma3:4b', t('Gemma 3 4B - alternative, ~3,3 Go', 'Gemma 3 4B - alternative, ~3.3 GB')),
 ]
+EDITION_FILE = Path(__file__).resolve().parent / 'edition.json'
 
 
 def is_game_dir(path):
@@ -175,6 +176,64 @@ def setup_game():
     install_game_files(source)
 
 
+def setup_hd_art(unattended=False):
+    """Install published packs after game verification, even on repeat setup."""
+    if not EDITION_FILE.is_file() or json.loads(EDITION_FILE.read_text(encoding='utf-8')).get('edition') != 'hd':
+        return
+    title(t('Art HD (optionnel)', 'HD art (optional)'))
+    if not is_game_dir(GAME):
+        print(t('Art HD refuse : Fallout 2 (master.dat et critter.dat) absent.',
+                'HD art refused: Fallout 2 (master.dat and critter.dat) is missing.'))
+        return
+    if not unattended and not yes(t('Telecharger les packs graphiques HD disponibles?',
+                                   'Download the available HD graphics packs?')):
+        return
+    print(t('Recherche des packs HD publies...', 'Checking for published HD packs...'))
+    try:
+        from types import SimpleNamespace
+        from wasteland_hd.__main__ import ASSETS, cmd_install
+        cmd_install(SimpleNamespace(game=str(GAME), packs=ASSETS, only=None))
+    except (Exception, SystemExit) as e:  # noqa: BLE001 - optional art must not break setup
+        # The first release remains a GitHub draft until Yan checks its art.
+        print(t('Packs HD indisponibles pour le moment : ', 'HD packs unavailable for now: ') + str(e))
+        print(t('Relance la configuration pour les installer apres publication.',
+                'Run setup again to install them once published.'))
+
+
+def unattended_main():
+    """NSIS /S: configure a found game without input, phone, or AI downloads.
+
+    An offline HD pack must never abort a successful install. Keep a readable
+    setup log because a silent NSIS run has no console to display its errors.
+    """
+    from contextlib import redirect_stderr, redirect_stdout
+
+    USERDATA.mkdir(parents=True, exist_ok=True)
+    with (USERDATA / 'setup-install.log').open('w', encoding='utf-8') as log:
+        with redirect_stdout(log), redirect_stderr(log):
+            print('Wasteland Reborn unattended configuration', flush=True)
+            try:
+                settings = load_settings()
+                settings.update(lang=LANG, ai=False, phone_ai=False)
+                save_settings(settings)
+                source = find_game()
+                if source is None:
+                    print(t('Fallout 2 introuvable. Installer le jeu puis relancer Wasteland - Configurer.',
+                            'Fallout 2 not found. Install the game and run Wasteland - Setup later.'))
+                    return 0
+                print(t('Fallout 2 trouve : ', 'Fallout 2 found: ') + str(source))
+                install_game_files(source)
+                setup_hd_art(unattended=True)
+                apply_pc_config(settings)
+                print(t('Installation du jeu terminee. Telephone et IA configurables plus tard.',
+                        'Game setup complete. Configure phone and AI later.'))
+                return 0
+            except Exception as e:  # noqa: BLE001 - preserve installer even if setup fails
+                print(f'Unattended setup failed: {type(e).__name__}: {e}')
+                print('Run Wasteland - Setup from the Start menu to retry.')
+                return 1
+
+
 def pull_model(name):
     import urllib.request
     print(t(f'\nTelechargement de {name} (ca peut prendre plusieurs minutes)...', f'\nDownloading {name} (this can take several minutes)...'))
@@ -256,13 +315,16 @@ def apply_pc_config(settings):
 
 
 def main():
-    os.system('title Wasteland Reborn - Configuration')
-    print(t('WASTELAND REBORN - Fallout 2 Restoration Project + PNJ avec IA',
-            'WASTELAND REBORN - Fallout 2 Restoration Project + AI NPCs'))
+    hd = EDITION_FILE.is_file()
+    product = 'Wasteland Reborn HD' if hd else 'Wasteland Reborn'
+    os.system('title ' + product + ' - Configuration')
+    print(product.upper() + t(' - Fallout 2 Restoration Project + PNJ avec IA',
+                              ' - Fallout 2 Restoration Project + AI NPCs'))
     settings = load_settings()
     settings['lang'] = LANG
     save_settings(settings)
     setup_game()
+    setup_hd_art()
     setup_ai(settings)
     save_settings(settings)
     apply_pc_config(settings)
@@ -271,13 +333,16 @@ def main():
     phone.run(interactive_end=False)
 
     title(t('Fini!', 'Done!'))
-    print(t('Lance le jeu avec l\'icone "Wasteland Reborn" sur le bureau.', 'Start the game with the "Wasteland Reborn" icon on the desktop.'))
+    print(t(f'Lance le jeu avec l\'icone "{product}" sur le bureau.',
+            f'Start the game with the "{product}" desktop icon.'))
     if settings.get('ai'):
         print(t('En dialogue, choisis [Speak freely] et ecris ce que tu veux.', 'In dialogues, pick [Speak freely] and type whatever you want.'))
     pause()
 
 
 if __name__ == '__main__':
+    if '--unattended' in sys.argv:
+        sys.exit(unattended_main())
     try:
         main()
     except KeyboardInterrupt:

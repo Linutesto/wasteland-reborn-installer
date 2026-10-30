@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 # One-time setup for building Wasteland Reborn from this repository on Linux x86_64:
-# engine submodule, toolchains (into toolchain/), the RPU game profile (build/profile)
-# and the Android APK. Then: windows/build.sh makes the Windows installer.
+# engine submodule, toolchains (into toolchain/), the HD pack tools, the RPU game
+# profile (build/profile) and the Android APK (apk/). Then: windows/build.sh makes
+# the Windows installer.
 #
-#   ./bootstrap.sh              everything
-#   ./bootstrap.sh --no-android skip the Android SDK and the APK
-#                               (windows/build.sh then needs APK=<path to an APK>)
+#   ./bootstrap.sh                 the classic edition's APK: apk/Wasteland-arm64.apk
+#   ./bootstrap.sh --edition hd    the HD edition's APK:   apk/Wasteland-HD-arm64.apk
+#   ./bootstrap.sh --no-android    skip the Android SDK and the APK
+#                                  (windows/build.sh then needs APK=<path to an APK>)
+#
+# The engine submodule is pinned to its wasteland-reborn-hd branch, which contains
+# wasteland-reborn: one checkout builds both editions (the edition is the Gradle flag
+# -Pfallout2ce.hd, not a different source tree).
 #
 # Host packages: git cmake ninja rsync unzip curl tar xz python3 ImageMagick (magick),
 # SDL2 and zlib development files (host build of the engine's ce-dat-tool), and
@@ -14,8 +20,29 @@
 set -euo pipefail
 F=$(cd "$(dirname "$0")" && pwd)
 T=$F/toolchain
+ENGINE=$F/src/imbaner_fallout2-ce-mobile
+# The installer module (wasteland_hd) the HD edition ships; pinned like the
+# toolchains below. Its own `art` submodule (the HD image source) is never cloned.
+HDTOOLS_URL=https://github.com/Linutesto/wasteland-hd-tools.git
+HDTOOLS_COMMIT=7559487f518ab9f832d9fb25f0b84983ffad1f30
 ANDROID=1
-[ "${1:-}" = "--no-android" ] && ANDROID=0
+EDITION=normal
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --no-android) ANDROID=0 ;;
+        --edition)
+            [ $# -ge 2 ] || { echo "--edition needs normal or hd" >&2; exit 2; }
+            EDITION=$2; shift ;;
+        --edition=*) EDITION=${1#--edition=} ;;
+        -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
+        *) echo "bootstrap.sh: unknown argument: $1 (see --help)" >&2; exit 2 ;;
+    esac
+    shift
+done
+case "$EDITION" in
+    normal|hd) ;;
+    *) echo "invalid --edition $EDITION (normal or hd)" >&2; exit 2 ;;
+esac
 
 LLVM_MINGW=llvm-mingw-20261020-ucrt-ubuntu-22.04-x86_64
 LLVM_MINGW_URL=https://github.com/mstorsjo/llvm-mingw/releases/download/20261020/$LLVM_MINGW.tar.xz
@@ -41,8 +68,23 @@ download() {
     fi
 }
 
-echo "== engine (submodule)"
+echo "== engine (submodule, wasteland-reborn-hd)"
 git -C "$F" submodule update --init
+
+echo "== HD pack tools (wasteland-hd-tools, pinned)"
+HDTOOLS=$F/src/wasteland-hd-tools
+if [ ! -d "$HDTOOLS/.git" ]; then
+    git clone -q "$HDTOOLS_URL" "$HDTOOLS"
+fi
+if ! git -C "$HDTOOLS" cat-file -e "$HDTOOLS_COMMIT^{commit}" 2>/dev/null; then
+    git -C "$HDTOOLS" fetch -q origin
+fi
+if ! git -C "$HDTOOLS" cat-file -e "$HDTOOLS_COMMIT^{commit}" 2>/dev/null; then
+    echo "wasteland-hd-tools: pinned commit $HDTOOLS_COMMIT is not available" >&2
+    echo "(update HDTOOLS_COMMIT in bootstrap.sh after checking src/wasteland-hd-tools)" >&2
+    exit 1
+fi
+git -C "$HDTOOLS" checkout -q --detach "$HDTOOLS_COMMIT"
 
 mkdir -p "$T/win" "$T/downloads"
 echo "== llvm-mingw (Windows cross compiler)"
@@ -82,9 +124,34 @@ if [ "$ANDROID" = 1 ]; then
     "$SDK/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK" \
         "platforms;android-35" "build-tools;35.0.0" "ndk;27.3.13750724" "cmake;3.22.1" "platform-tools"
 
-    echo "== APK"
-    "$F/tools/android-build.sh"
+    # The edition is one Gradle flag: -Pfallout2ce.hd builds the .hd app (own
+    # icon, own files and saves) from the same engine source.
+    if [ "$EDITION" = hd ]; then
+        GRADLE_TASK="assemblePhone -Pfallout2ce.hd"
+        BUILT=$ENGINE/os/android/app/build/outputs/apk/phone/app-phone.apk
+        APK_NAME=Wasteland-HD-arm64.apk
+    else
+        GRADLE_TASK="assembleDebug"
+        BUILT=$ENGINE/os/android/app/build/outputs/apk/debug/app-debug.apk
+        APK_NAME=Wasteland-arm64.apk
+    fi
+    echo "== APK ($EDITION): $GRADLE_TASK"
+    "$F/tools/android-build.sh" "$GRADLE_TASK"
+    [ -f "$BUILT" ] || { echo "gradle did not produce $BUILT" >&2; exit 1; }
+    mkdir -p "$F/apk"
+    cp "$BUILT" "$F/apk/$APK_NAME"
+    ls -la "$F/apk/$APK_NAME"
+    APK_DONE=$F/apk/$APK_NAME
+else
+    APK_DONE='(skipped: --no-android)'
 fi
 
 echo
-echo "Done. Build the Windows installer with: windows/build.sh"
+echo "Done. APK: $APK_DONE"
+echo "Build the Windows installer with:"
+if [ "$EDITION" = hd ]; then
+    echo "  EDITION=hd windows/build.sh    # windows/dist/WastelandRebornHD-Setup.exe"
+else
+    echo "  windows/build.sh               # windows/dist/WastelandReborn-Setup.exe"
+    echo "  EDITION=hd windows/build.sh    # the HD edition (needs its APK: ./bootstrap.sh --edition hd)"
+fi

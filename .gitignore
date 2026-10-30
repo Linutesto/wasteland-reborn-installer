@@ -6,4 +6,10 @@
 /apk/
 /windows/build/
 /windows/dist/
+/src/wasteland-hd-tools/
 __pycache__/
+# Release work area (notes for resuming, proposed manifests)
+/tmp-release/
+# End-to-end Wine test: its own prefix, and the player's own game files
+/tests/
+/gamedata/
