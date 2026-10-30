@@ -8,8 +8,8 @@
 /windows/dist/
 /src/wasteland-hd-tools/
 __pycache__/
-# Release work area (notes for resuming, proposed manifests)
-/tmp-release/
+# Release work area: resuming notes stay local, the proposed manifest is committed
+/tmp-release/PROGRESS.md
 # End-to-end Wine test: its own prefix, and the player's own game files
 /tests/
 /gamedata/

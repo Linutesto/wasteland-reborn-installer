@@ -36,13 +36,16 @@ jobs:
           mkdir -p "$RUNNER_TEMP/chunks" "$RUNNER_TEMP/assembled"
           gh release download "$TAG" -R "$REPO" -p "$MANIFEST_ASSET" -D "$RUNNER_TEMP/chunks"
           python3 - <<'PY'
-          import hashlib, json, os, pathlib, subprocess, sys, time
+          import hashlib, json, os, pathlib, re, subprocess, sys, time
 
           root = pathlib.Path(os.environ['RUNNER_TEMP'])
           chunks_dir = root / 'chunks'
           manifest = json.loads((chunks_dir / os.environ['MANIFEST_ASSET']).read_text())
           assert manifest['format'] == 'github-release-chunks-v1'
-          assert manifest['name'] == 'WastelandReborn-Setup.exe'
+          # Any release file may be chunked (both installers); the manifest must
+          # be the one this dispatch was given, and its name a plain file name.
+          assert re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*\.(?:exe|apk)', manifest['name'])
+          assert os.environ['MANIFEST_ASSET'] == manifest['name'] + '.manifest.json'
           assert len(manifest['parts']) and len(manifest['parts']) <= 200
           assert sum(p['size'] for p in manifest['parts']) == manifest['size']
           output = root / 'assembled' / manifest['name']

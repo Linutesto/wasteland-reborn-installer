@@ -1,77 +1,156 @@
 # Wasteland Reborn
 
-**Fallout 2 on your Android phone**, with the **Restoration Project (RPU)** +
-FO2Tweaks on the open-source **Fallout 2 Community Edition** engine (mobile
-fork), a full touch UI, and **NPCs you can talk to freely through a local AI**
-(optional, via Ollama).
+**Fallout 2 on your Android phone** — classic **Wasteland** and the **HD**
+edition — on the open-source **Fallout 2 Community Edition** engine (mobile
+fork), with the **Restoration Project (RPU)** + FO2Tweaks, a full touch UI,
+and **NPCs you can talk to freely through a local AI** (optional, via Ollama).
 
-*[Version française plus bas](#wasteland-reborn--installateur-windows)*
+*[Version française ci-dessous](#wasteland-reborn--en-français)*
 
 ## ⬇️ Download
 
-📱 **Android: [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)** (≈ 8 MB). If the Wasteland app is already installed, this is an update: your saves stay. The game itself (your Fallout 2 files) is imported in the app, or installed from the PC with the Windows installer.
+| What | Link | Size |
+| --- | --- | --- |
+| 📱 Classic app | [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk) | ≈ 4 MB |
+| 📱 HD app | [Wasteland-HD-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-HD-arm64.apk) | ≈ 4 MB |
+| 💻 Windows installer (classic or HD) | [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest) · [WastelandRebornHD-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest) | ≈ 830 MB each |
+| Checksums | [SHA256SUMS.txt](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/SHA256SUMS.txt) | |
 
-💻 **Windows installer: [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 MB, Windows 10/11 64-bit, English or French). It sets everything up and pushes the game to your phone.
+Updating an installed app? Install the new APK over it — your saves stay.
+The two apps (`Wasteland` and `Wasteland HD`) are separate packages: they
+install side by side, each with its own files and saves.
 
-## You need
+## You need your own Fallout 2
 
-- **Your own copy of Fallout 2** installed (Epic, Steam or GOG). No game files
-  are included: the setup finds your game and copies `master.dat`,
-  `critter.dat` and the music.
-- An Android 64-bit phone (wireless debugging on, for the install from the PC).
-- Optional: [Ollama](https://ollama.com) for the AI.
+**No game files are included in anything you download here.** Fallout 2 is
+not ours to give away: you need **your own copy** (Epic, Steam or GOG), and
+you copy its files yourself. Everything else — engine, Restoration Project,
+touch UI, HD art — is in these releases.
 
-## Install
+- An Android phone with a **64-bit (arm64)** processor, or Windows 10/11.
+- About 2 GB free on the phone for the game's files.
+- Optional: [Ollama](https://ollama.com) for the AI NPCs.
 
-1. Run `WastelandReborn-Setup.exe` and pick English. Windows may show
-   "Windows protected your PC" (unsigned file) → **More info** → **Run anyway**.
-2. At the end a setup window asks about your game, the AI (if Ollama is
-   there), then a small phone menu (pick a phone, pair one with the 6-digit
-   code, or skip). adb (Google's official Android tool) is downloaded
-   automatically.
-3. Play on the phone (the **Wasteland** app). The desktop icon also starts it
-   on the PC with classic mouse controls.
+---
+
+## Install path A — phone only
+
+1. **Get the APK** on the phone (open this README on the phone and tap the
+   link above): `Wasteland-arm64.apk` for the classic look, or
+   `Wasteland-HD-arm64.apk` for the HD edition.
+2. **Install it.** Android asks for permission to install apps from this
+   source (Chrome, Files, …) → allow it once. The app is unsigned by Google
+   Play, that is expected.
+3. **Put your Fallout 2 files on the phone.** On the computer where the game
+   is installed, find its folder:
+
+   | Store | Where the game lives | How to open the folder |
+   | --- | --- | --- |
+   | Steam | `…\steamapps\common\Fallout 2` (often `C:\Program Files (x86)\Steam\steamapps\common\Fallout 2`) | Library → right-click **Fallout 2** → **Manage → Browse local files** |
+   | GOG | `C:\GOG Games\Fallout 2` (or `…\GOG Galaxy\Games\Fallout 2`) | GOG Galaxy → **Fallout 2** → ⚙ / Options → **Manage installation → Show folder** |
+   | Epic | `C:\Program Files\Epic Games\Fallout 2` | Library → **…** on Fallout 2 → **Manage** → folder icon |
+
+   What matters: the folder that contains **`master.dat`** and
+   **`critter.dat`** (plus its `data\` folder — music and mods). Copy **the
+   whole folder** to the phone, any way you like:
+
+   - **USB cable**: connect the phone, choose *File transfer*, drag the folder
+     into the phone's `Downloads`.
+   - **Cloud drive or messenger**: zip the folder first (`.zip`, `.7z`,
+     `.rar` all work) and put the archive in the phone's `Downloads`.
+
+4. **Import them in the app.** First launch shows **Files of the game** →
+   **Choose the folder** (the one you dragged over) or **Choose an archive**
+   (the `.zip` you sent). The app finds `master.dat` + `critter.dat` at any
+   depth, tells you what it found, and copies it in (mods and saves come
+   along). Keep the screen on for the few minutes it takes.
+5. **HD edition only — the HD art.** The HD app checks for art packs each
+   time it starts and **offers the download** (name, size, **Download** /
+   **Later**); you can also open **Files of the game → Check for HD art**.
+   It needs an internet connection; **Later** starts the game right away, and
+   an interrupted download resumes.
+6. **Play.** The game itself needs no connection afterwards.
+
+No computer? The game folder can also come from another phone, a SD card or
+any file manager — step 4 is the same.
+
+## Install path B — PC + phone
+
+1. **Run `WastelandReborn-Setup.exe`** (classic) or
+   `WastelandRebornHD-Setup.exe` (HD) and pick your language. Windows shows
+   *"Windows protected your PC"* (the file is not signed) → **More info** →
+   **Run anyway**.
+2. **Follow the setup.** It finds your Fallout 2 (Epic, Steam, GOG or a folder
+   you point it at) and copies the files. The HD installer additionally offers
+   the HD art packs once your game is found.
+3. **At the end a window opens**: your game, the AI (if Ollama is installed),
+   then the phone. Turn on **wireless debugging** on the phone (Developer
+   options), same Wi-Fi as the PC, and pick the phone in the menu — or skip
+   and do it later from **Start menu › Wasteland › Install on phone**. adb
+   (Google's official Android tool) is downloaded automatically.
+4. **Play** on the phone (the **Wasteland** app), or on the PC with the
+   desktop icon (classic mouse controls).
 
 In dialogues, pick **[Speak freely]** and type whatever you want to the
-character.
+character. **AI on the phone** runs on the PC: **Start menu › Wasteland ›
+AI server (phone)** must be open; the menu's *Everywhere* option installs
+[Tailscale](https://tailscale.com) (free private VPN) on both — log in with
+the **same account** on each. Without the server the game plays normally,
+offline.
 
-Start menu › Wasteland Reborn: *Setup* (turn the AI on later), *Install on
-phone*, *AI server (phone)*.
+The HD installer installs beside the classic one
+(`%LOCALAPPDATA%\WastelandRebornHD`), with its own settings and saves.
 
-**AI on the phone** runs on the PC (on, with *AI server* open). The menu offers
-"Everywhere": the setup installs and configures [Tailscale](https://tailscale.com)
-(free private VPN) on the PC and the phone; log in with **the same account** on
-both. Or "Only at home" (same Wi-Fi), or no AI on the phone. Without the
-server the game plays normally, offline.
+## Install path C — build from source
 
-## Build from source
-
-Everything is rebuilt from this repository on Linux x86_64. No Fallout 2 file is
-downloaded or included: players add their own at install time.
+Everything is rebuilt from this repository on Linux x86_64. No Fallout 2 file
+is downloaded or included: players add their own at install time.
 
 ```sh
 git clone --recursive https://github.com/Linutesto/wasteland-reborn-installer
 cd wasteland-reborn-installer
-./bootstrap.sh        # toolchains, RPU profile, APK (asks you to accept the Android SDK licenses)
-windows/build.sh      # windows/dist/WastelandReborn-Setup.exe
+./bootstrap.sh                  # toolchains, RPU profile, classic APK (accept the Android SDK licenses)
+./bootstrap.sh --edition hd     # HD APK (apk/Wasteland-HD-arm64.apk)
+windows/build.sh                # windows/dist/WastelandReborn-Setup.exe
+EDITION=hd windows/build.sh     # windows/dist/WastelandRebornHD-Setup.exe
 ```
 
 Host packages: `git cmake ninja rsync unzip curl tar xz python3`, ImageMagick,
 SDL2 and zlib development files, and `makensis` or Wine.
 `./bootstrap.sh --no-android` skips the Android SDK; then pass an APK:
 `APK=path/to.apk windows/build.sh`.
+Tests: `python3 -m unittest discover -s windows/tests -v` (offline, 7 tests)
+and `bash windows/tests/test_wine_install.sh` (needs Wine and your own game
+files in `gamedata/`; it skips without them). Releasing: see
+[RELEASING.md](RELEASING.md).
 
 | Part | Where | What |
 | --- | --- | --- |
-| Engine | `src/imbaner_fallout2-ce-mobile` (submodule, branch `wasteland-reborn`) | fallout2-ce mobile fork + touch UI, AI free talk, Windows build |
+| Engine | `src/imbaner_fallout2-ce-mobile` (submodule, branch `wasteland-reborn-hd`) | fallout2-ce mobile fork + touch UI, AI free talk, Windows build, HD rendering and art updater |
+| HD packs | `bootstrap.sh` → `src/wasteland-hd-tools` (pinned) | the pack downloader the HD installer ships; the HD images live in [wasteland-hd-assets](https://github.com/Linutesto/wasteland-hd-assets) |
 | AI brain | `brain/` | Python HTTP server between the game and Ollama / an OpenAI-compatible server (`python3 -m unittest discover -s brain/tests`) |
 | Game profile | `profile/` + `tools/mkprofile.py` | RPU + FO2Tweaks from their GitHub releases (pinned sha256), the game config and overlay → `build/profile` |
-| Windows installer | `windows/` | NSIS installer, setup scripts (game detection, Ollama, phone over adb, Tailscale) |
-| Toolchains | `bootstrap.sh` → `toolchain/` | llvm-mingw 20261020, JDK 17, Android SDK 35 / NDK 27.3, embeddable Python 3.13.9, NSIS 3.11 |
+| Windows installer | `windows/` | NSIS installer for both editions, setup scripts (game detection, Ollama, phone over adb, Tailscale, HD art) |
+| Release tooling | `tools/release.sh`, `RELEASING.md`, `.github/workflows/` | the v1.2 asset layout and the chunked-upload workflow |
 
 Your APK is signed with your own Android debug key, so it can't update the
 released app (Android refuses a different signature): back up your saves,
 uninstall the released app, then install yours.
+
+## The HD art
+
+The HD edition re-draws the game's pictures at 2× (256-color originals →
+RGBA). It ships as separate packs the app downloads by itself, so a phone
+only pulls what exists today and tops up later:
+
+| Pack | What it covers | State |
+| --- | --- | --- |
+| `world` | tiles, walls, scenery, items, misc, heads, interface | available |
+| `critters-01`, `critters-02`, … | people, monsters and animals — split into parts, released as each part finishes | in production |
+
+Installed packs are recorded per profile; already-installed packs are never
+offered again, and a changed pack is offered as an update. The classic app
+ignores HD art entirely.
 
 ## Credits
 
@@ -81,68 +160,150 @@ uninstall the released app, then install yours.
   and [FO2Tweaks](https://github.com/BGforgeNet/FO2tweaks) by BGforgeNet
 - Python (embeddable), NSIS, Ollama
 
-Fallout is a trademark of Bethesda Softworks. Unofficial fan project.
+Fallout is a trademark of Bethesda Softworks. Unofficial fan project: we
+include **no game files** — bring your own Fallout 2.
 
 ---
 
-# Wasteland Reborn — installateur Windows
+# Wasteland Reborn — en français
 
-Fallout 2 avec le **Restoration Project (RPU)** + FO2Tweaks, sur le moteur
-open source **Fallout 2 Community Edition** (fork mobile), avec des **PNJ qui
-répondent en texte libre grâce à une IA locale** (optionnelle, via Ollama).
-Peut aussi installer le jeu sur un téléphone Android.
+**Fallout 2 sur ton téléphone Android** — l'édition **classique** et l'édition
+**HD** — sur le moteur open source **Fallout 2 Community Edition** (fork
+mobile), avec le **Restoration Project (RPU)** + FO2Tweaks, une interface
+tactile complète et des **PNJ qui répondent en texte libre grâce à une IA
+locale** (optionnelle, via Ollama).
 
 ## ⬇️ Télécharger
 
-📱 **Android : [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)** (≈ 8 Mo) — si l'app Wasteland est déjà installée, c'est une mise à jour : tes sauvegardes restent. Le jeu lui-même (fichiers de Fallout 2) s'importe dans l'app, ou s'installe depuis le PC avec l'installateur Windows.
+| Ce qu'il y a | Lien | Taille |
+| --- | --- | --- |
+| 📱 App classique | [Wasteland-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk) | ≈ 4 Mo |
+| 📱 App HD | [Wasteland-HD-arm64.apk](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-HD-arm64.apk) | ≈ 4 Mo |
+| 💻 Installateur Windows (classique ou HD) | [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest) · [WastelandRebornHD-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest) | ≈ 830 Mo chacun |
+| Sommes de contrôle | [SHA256SUMS.txt](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/SHA256SUMS.txt) | |
 
-💻 **Windows : [WastelandReborn-Setup.exe](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest)** (≈ 830 Mo, Windows 10/11 64 bits, anglais ou français)
+Mise à jour d'une app déjà installée ? Installez l'APK par-dessus : tes
+sauvegardes restent. Les deux apps (`Wasteland` et `Wasteland HD`) sont des
+paquets distincts : elles coexistent, chacune avec ses fichiers et ses
+sauvegardes.
 
-## Il te faut
+## Il te faut TA propre copie de Fallout 2
 
-- **Ta propre copie de Fallout 2** installée (Epic, Steam ou GOG). Aucun
-  fichier du jeu n'est inclus : l'installation retrouve ton jeu et copie
-  `master.dat`, `critter.dat` et la musique.
-- Optionnel : [Ollama](https://ollama.com) pour l'IA.
-- Optionnel : un téléphone Android 64 bits (débogage sans fil activé).
+**Aucun fichier du jeu n'est inclus dans ce que tu télécharges ici.** Fallout 2
+n'est pas à nous à donner : il faut **ta propre copie** (Epic, Steam ou GOG)
+et tu copies ses fichiers toi-même. Tout le reste — moteur, Restoration
+Project, interface tactile, art HD — est dans ces releases.
 
-## Installation
+- Un téléphone Android **64 bits (arm64)**, ou Windows 10/11.
+- Environ 2 Go libres sur le téléphone pour les fichiers du jeu.
+- Optionnel : [Ollama](https://ollama.com) pour les PNJ avec IA.
 
-1. Lance `WastelandReborn-Setup.exe` et choisis Français. Windows peut afficher « Windows a
-   protégé votre ordinateur » (fichier non signé) → **Informations
+---
+
+## Chemin A — seulement le téléphone
+
+1. **Récupère l'APK** sur le téléphone (ouvre ce README sur le téléphone et
+   touche le lien ci-dessus) : `Wasteland-arm64.apk` pour l'aspect classique,
+   ou `Wasteland-HD-arm64.apk` pour l'édition HD.
+2. **Installe-le.** Android demande la permission d'installer des apps
+   sources inconnues (Chrome, Fichiers, …) → autorise une fois. L'app n'est
+   pas signée par Google Play, c'est normal.
+3. **Mets les fichiers de Fallout 2 sur le téléphone.** Sur l'ordinateur où le
+   jeu est installé, trouve son dossier :
+
+   | Magasin | Où est le jeu | Comment ouvrir le dossier |
+   | --- | --- | --- |
+   | Steam | `…\steamapps\common\Fallout 2` (souvent `C:\Program Files (x86)\Steam\steamapps\common\Fallout 2`) | Bibliothèque → clic droit sur **Fallout 2** → **Gérer → Ouvrir le dossier du jeu** |
+   | GOG | `C:\GOG Games\Fallout 2` (ou `…\GOG Galaxy\Games\Fallout 2`) | GOG Galaxy → **Fallout 2** → ⚙ → **Gérer l'installation → Afficher le dossier** |
+   | Epic | `C:\Program Files\Epic Games\Fallout 2` | Bibliothèque → **…** sur Fallout 2 → **Gérer** → icône dossier |
+
+   L'important : le dossier qui contient **`master.dat`** et
+   **`critter.dat`** (avec son dossier `data\` — musique et mods). Copie
+   **tout le dossier** sur le téléphone, comme tu veux :
+
+   - **Câble USB** : branche le téléphone, choisis *Transfert de fichiers*,
+     glisse le dossier dans `Téléchargements` du téléphone.
+   - **Cloud ou messagerie** : compresse d'abord le dossier (`.zip`, `.7z`,
+     `.rar` marchent) et mets l'archive dans `Téléchargements`.
+
+4. **Importe-les dans l'app.** Au premier lancement, l'écran **Fichiers du
+   jeu** → **Choisir le dossier** (celui que tu viens de glisser) ou
+   **Choisir une archive** (le `.zip` envoyé). L'app trouve `master.dat` et
+   `critter.dat` à n'importe quelle profondeur, te montre ce qu'elle a trouvé
+   et copie tout (mods et sauvegardes compris). Laisse l'écran allumé les
+   quelques minutes que ça prend.
+5. **Édition HD seulement — l'art HD.** L'app HD cherche les packs d'art à
+   chaque démarrage et **propose le téléchargement** (nom, taille,
+   **Télécharger** / **Plus tard**) ; tu peux aussi ouvrir **Fichiers du jeu →
+   Vérifier l'art HD**. Il faut une connexion ; **Plus tard** lance le jeu
+   tout de suite, et un téléchargement interrompu reprend où il en était.
+6. **Joue.** Ensuite le jeu n'a plus besoin de connexion.
+
+Pas d'ordinateur sous la main ? Le dossier du jeu peut aussi venir d'un autre
+téléphone, d'une carte SD ou d'un gestionnaire de fichiers — l'étape 4 est la
+même.
+
+## Chemin B — PC + téléphone
+
+1. **Lance `WastelandReborn-Setup.exe`** (classique) ou
+   `WastelandRebornHD-Setup.exe` (HD) et choisis la langue. Windows affiche
+   « Windows a protégé votre ordinateur » (fichier non signé) → **Informations
    complémentaires** → **Exécuter quand même**.
-2. À la fin, une fenêtre de configuration te pose les questions :
-   ton jeu, l'IA (si Ollama est là), puis un petit menu pour le téléphone
-   (choisir un téléphone, en associer un avec le code à 6 chiffres, ou passer).
-   adb (outil Android officiel de Google) est téléchargé automatiquement.
-3. Joue avec l'icône **Wasteland Reborn** sur le bureau.
+2. **Suis l'installation.** Elle retrouve ton Fallout 2 (Epic, Steam, GOG ou
+   un dossier que tu lui indiques) et prend ses fichiers. L'installateur HD
+   propose en plus les packs d'art HD une fois le jeu trouvé.
+3. **À la fin, une fenêtre s'ouvre** : ton jeu, l'IA (si Ollama est installé),
+   puis le téléphone. Active le **débogage sans fil** sur le téléphone
+   (Options pour les développeurs), même Wi-Fi que le PC, et choisis le
+   téléphone dans le menu — ou passe et fais-le plus tard via **Menu Démarrer
+   › Wasteland › Installer sur le téléphone**. adb (l'outil Android officiel
+   de Google) est téléchargé tout seul.
+4. **Joue** sur le téléphone (l'app **Wasteland**) ou sur le PC avec l'icône
+   du bureau (souris classique).
 
-En dialogue, choisis **[Speak freely]** et écris ce que tu veux au personnage
-(en anglais, la langue du jeu).
+En dialogue, choisis **[Speak freely]** et écris ce que tu veux au personnage.
+**L'IA sur le téléphone** passe par le PC : **Menu Démarrer › Wasteland ›
+Serveur IA (téléphone)** doit être ouvert ; l'option « Partout » installe
+[Tailscale](https://tailscale.com) (VPN privé gratuit) sur les deux —
+connecte-toi avec **le même compte** sur chacun. Sans serveur, le jeu marche
+normalement, hors ligne.
 
-Menu Démarrer › Wasteland Reborn : *Configurer* (activer l'IA plus tard),
-*Installer sur le téléphone*, *Serveur IA (téléphone)*.
+L'installateur HD s'installe à côté de l'édition classique
+(`%LOCALAPPDATA%\WastelandRebornHD`), avec ses propres réglages et
+sauvegardes.
 
-**IA sur le téléphone** : elle passe par le PC (allumé, *Serveur IA* ouvert).
-Le menu propose « Partout » : l'installation installe et configure
-[Tailscale](https://tailscale.com) (VPN privé gratuit) sur le PC et le
-téléphone. Connecte-toi avec **le même compte** sur les deux. Ou « Seulement
-à la maison » (même Wi-Fi), ou pas d'IA sur le téléphone.
+## Chemin C — construire depuis les sources
 
-## Construire depuis les sources
-
-Tout se reconstruit depuis ce dépôt sous Linux x86_64 (aucun fichier de Fallout 2
-n'est téléchargé ni inclus) :
+Tout se reconstruit depuis ce dépôt sous Linux x86_64. Aucun fichier de
+Fallout 2 n'est téléchargé ni inclus : les joueurs ajoutent le leur au moment
+de l'installation.
 
 ```sh
 git clone --recursive https://github.com/Linutesto/wasteland-reborn-installer
 cd wasteland-reborn-installer
-./bootstrap.sh        # outils, profil RPU, APK (tu acceptes les licences du SDK Android)
-windows/build.sh      # windows/dist/WastelandReborn-Setup.exe
+./bootstrap.sh                  # outils, profil RPU, APK classique (accepte les licences du SDK Android)
+./bootstrap.sh --edition hd     # APK HD (apk/Wasteland-HD-arm64.apk)
+windows/build.sh                # windows/dist/WastelandReborn-Setup.exe
+EDITION=hd windows/build.sh     # windows/dist/WastelandRebornHD-Setup.exe
 ```
 
-Détails (paquets requis, structure du dépôt) : voir la section anglaise
-« Build from source » plus haut.
+Paquets requis, tests, publication : voir la section anglaise « Build from
+source » plus haut et [RELEASING.md](RELEASING.md).
+
+## L'art HD
+
+L'édition HD redessine les images du jeu en 2× (originales 256 couleurs →
+RGBA). Il est livré en packs séparés que l'app télécharge toute seule, pour
+qu'un téléphone ne prenne que ce qui existe et complète plus tard :
+
+| Pack | Ce qu'il couvre | État |
+| --- | --- | --- |
+| `world` | dalles, murs, décors, objets, divers, têtes, interface | disponible |
+| `critters-01`, `critters-02`, … | gens, monstres et animaux — découpés en parts, publiés au fur et à mesure | en production |
+
+Les packs installés sont enregistrés par profil ; un pack déjà installé n'est
+plus proposé, et un pack modifié est proposé comme mise à jour. L'app
+classique ignore totalement l'art HD.
 
 ## Crédits
 
@@ -152,4 +313,5 @@ Détails (paquets requis, structure du dépôt) : voir la section anglaise
   et [FO2Tweaks](https://github.com/BGforgeNet/FO2tweaks) — BGforgeNet
 - Python (embeddable), NSIS, Ollama
 
-Fallout est une marque de Bethesda Softworks. Projet de fans, non officiel.
+Fallout est une marque de Bethesda Softworks. Projet de fans, non officiel :
+**aucun fichier de jeu n'est inclus** — apporte ta propre copie de Fallout 2.
