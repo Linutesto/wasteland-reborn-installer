@@ -6,6 +6,7 @@
 #
 #   ./bootstrap.sh                 the classic edition's APK: apk/Wasteland-arm64.apk
 #   ./bootstrap.sh --edition hd    the HD edition's APK:   apk/Wasteland-HD-arm64.apk
+#   ./bootstrap.sh --linux-only    Linux PC prerequisites only (no Windows/Android toolchain)
 #   ./bootstrap.sh --no-android    skip the Android SDK and the APK
 #                                  (windows/build.sh then needs APK=<path to an APK>)
 #
@@ -26,10 +27,12 @@ ENGINE=$F/src/imbaner_fallout2-ce-mobile
 HDTOOLS_URL=https://github.com/Linutesto/wasteland-hd-tools.git
 HDTOOLS_COMMIT=7559487f518ab9f832d9fb25f0b84983ffad1f30
 ANDROID=1
+WINDOWS=1
 EDITION=normal
 while [ $# -gt 0 ]; do
     case "$1" in
         --no-android) ANDROID=0 ;;
+        --linux-only) ANDROID=0; WINDOWS=0 ;;
         --edition)
             [ $# -ge 2 ] || { echo "--edition needs normal or hd" >&2; exit 2; }
             EDITION=$2; shift ;;
@@ -54,8 +57,11 @@ NSIS_URL=https://downloads.sourceforge.net/project/nsis/NSIS%203/3.11/nsis-3.11.
 NSIS_SHA256=c7d27f780ddb6cffb4730138cd1591e841f4b7edb155856901cdf5f214394fa1
 
 need() { command -v "$1" >/dev/null || { echo "missing host tool: $1" >&2; exit 1; }; }
-for tool in git cmake ninja rsync unzip curl tar python3 magick; do need "$tool"; done
-command -v makensis >/dev/null || need wine
+for tool in git cmake ninja rsync unzip curl tar python3; do need "$tool"; done
+if [ "$WINDOWS" = 1 ]; then
+    need magick
+    command -v makensis >/dev/null || need wine
+fi
 
 # download <url> <file> [sha256]
 download() {
@@ -86,7 +92,9 @@ if ! git -C "$HDTOOLS" cat-file -e "$HDTOOLS_COMMIT^{commit}" 2>/dev/null; then
 fi
 git -C "$HDTOOLS" checkout -q --detach "$HDTOOLS_COMMIT"
 
-mkdir -p "$T/win" "$T/downloads"
+mkdir -p "$T/downloads"
+if [ "$WINDOWS" = 1 ]; then
+mkdir -p "$T/win"
 echo "== llvm-mingw (Windows cross compiler)"
 if [ ! -d "$T/$LLVM_MINGW" ]; then
     download "$LLVM_MINGW_URL" "$T/downloads/$LLVM_MINGW.tar.xz"
@@ -102,6 +110,7 @@ if ! command -v makensis >/dev/null; then
     [ -d "$T/win/nsis-3.11" ] || unzip -q "$T/win/nsis.zip" -d "$T/win"
 fi
 
+fi
 echo "== game profile (RPU + FO2Tweaks, from their GitHub releases)"
 python3 "$F/tools/mkprofile.py"
 
@@ -148,10 +157,13 @@ fi
 
 echo
 echo "Done. APK: $APK_DONE"
+if [ "$WINDOWS" = 1 ]; then
 echo "Build the Windows installer with:"
 if [ "$EDITION" = hd ]; then
     echo "  EDITION=hd windows/build.sh    # windows/dist/WastelandRebornHD-Setup.exe"
 else
     echo "  windows/build.sh               # windows/dist/WastelandReborn-Setup.exe"
     echo "  EDITION=hd windows/build.sh    # the HD edition (needs its APK: ./bootstrap.sh --edition hd)"
+fi
+
 fi

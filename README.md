@@ -101,6 +101,10 @@ offline.
 The HD installer installs beside the classic one
 (`%LOCALAPPDATA%\WastelandRebornHD`), with its own settings and saves.
 
+## Linux PC and Android from Linux
+
+See the step-by-step [Linux guide](docs/INSTALL-LINUX.md) for Ubuntu, Fedora, Arch and Steam Deck, including optional AI and phone transfer.
+
 ## Install path C — build from source
 
 Everything is rebuilt from this repository on Linux x86_64. No Fallout 2 file
@@ -199,6 +203,10 @@ Project, interface tactile, art HD — est dans ces releases.
 - Optionnel : [Ollama](https://ollama.com) pour les PNJ avec IA.
 
 ---
+
+## PC Linux et Android depuis Linux
+
+Suis le [guide Linux en français](docs/INSTALL-LINUX.fr.md) pour Ubuntu, Fedora, Arch et Steam Deck, avec IA et transfert vers le téléphone en option.
 
 ## Chemin A — seulement le téléphone
 
