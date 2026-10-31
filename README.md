@@ -164,7 +164,7 @@ only pulls what exists today and tops up later:
 
 | Pack | What it covers | State |
 | --- | --- | --- |
-| `world` | tiles, walls, scenery, items, misc, heads, interface | available |
+| `world` | floors, walls, scenery, items and misc in the game world (also carries interface and inventory art the engine does not display yet) | available |
 | `critters-01`, `critters-02`, … | people, monsters and animals — split into parts, released as each part finishes | in production |
 
 Installed packs are recorded per profile; already-installed packs are never
@@ -336,7 +336,7 @@ qu'un téléphone ne prenne que ce qui existe et complète plus tard :
 
 | Pack | Ce qu'il couvre | État |
 | --- | --- | --- |
-| `world` | dalles, murs, décors, objets, divers, têtes, interface | disponible |
+| `world` | planchers, murs, décors, objets et divers sur la carte (contient aussi de l'art d'interface que le moteur n'affiche pas encore) | disponible |
 | `critters-01`, `critters-02`, … | gens, monstres et animaux — découpés en parts, publiés au fur et à mesure | en production |
 
 Les packs installés sont enregistrés par profil ; un pack déjà installé n'est
