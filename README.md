@@ -165,6 +165,7 @@ only pulls what exists today and tops up later:
 | Pack | What it covers | State |
 | --- | --- | --- |
 | `world` | floors, walls, scenery, items and misc in the game world (also carries interface and inventory art the engine does not display yet) | available |
+| `heads` | talking heads: the dialogue portraits in HD (app 1.3 or later) | available |
 | `critters-01`, `critters-02`, … | people, monsters and animals — split into parts, released as each part finishes | in production |
 
 Installed packs are recorded per profile; already-installed packs are never
@@ -337,6 +338,7 @@ qu'un téléphone ne prenne que ce qui existe et complète plus tard :
 | Pack | Ce qu'il couvre | État |
 | --- | --- | --- |
 | `world` | planchers, murs, décors, objets et divers sur la carte (contient aussi de l'art d'interface que le moteur n'affiche pas encore) | disponible |
+| `heads` | têtes parlantes : les portraits de dialogue en HD (app 1.3 ou plus récente) | disponible |
 | `critters-01`, `critters-02`, … | gens, monstres et animaux — découpés en parts, publiés au fur et à mesure | en production |
 
 Les packs installés sont enregistrés par profil ; un pack déjà installé n'est
