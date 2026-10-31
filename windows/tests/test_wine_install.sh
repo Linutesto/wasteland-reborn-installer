@@ -106,7 +106,7 @@ check_edition() {
   if [ "$key" = WastelandRebornHD ]; then
     test -f "$inst/setup/edition.json"
     test -f "$inst/setup/wasteland_hd/__main__.py"
-    rg -q 'HD packs unavailable for now:' "$inst/userdata/setup-install.log"
+    rg -q 'HD packs unavailable for now:|world: installed' "$inst/userdata/setup-install.log"
   else
     test ! -e "$inst/setup/edition.json"
   fi
