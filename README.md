@@ -164,7 +164,7 @@ only pulls what exists today and tops up later:
 
 | Pack | What it covers | State |
 | --- | --- | --- |
-| `world` | floors, walls, scenery, items and misc in the game world (also carries interface and inventory art the engine does not display yet) | available |
+| `world` | floors, walls, scenery, items and misc in the game world, plus inventory and loot items, HUD, skill art and elevators in the touch UI | available |
 | `heads` | talking heads: the dialogue portraits in HD (app 1.3 or later) | available |
 | `critters-01`, `critters-02`, … | people, monsters and animals — split into parts, released as each part finishes | in production |
 
@@ -337,7 +337,7 @@ qu'un téléphone ne prenne que ce qui existe et complète plus tard :
 
 | Pack | Ce qu'il couvre | État |
 | --- | --- | --- |
-| `world` | planchers, murs, décors, objets et divers sur la carte (contient aussi de l'art d'interface que le moteur n'affiche pas encore) | disponible |
+| `world` | planchers, murs, décors, objets et divers sur la carte, plus les objets d'inventaire et de butin, le HUD, l'art des compétences et les ascenseurs de l'interface tactile | disponible |
 | `heads` | têtes parlantes : les portraits de dialogue en HD (app 1.3 ou plus récente) | disponible |
 | `critters-01`, `critters-02`, … | gens, monstres et animaux — découpés en parts, publiés au fur et à mesure | en production |
 
