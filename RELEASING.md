@@ -9,19 +9,19 @@ them first, then re-run with `--publish`.
 
 ## 1. What a release contains
 
-Release `v1.2` (next) carries these assets, nothing else:
+Release `v1.4` carries these assets:
 
 | Asset | Built by | Notes |
 | --- | --- | --- |
-| `Wasteland-arm64.apk` | `./bootstrap.sh` | classic edition, Android 64-bit, ≈ 4 MB |
-| `Wasteland-HD-arm64.apk` | `./bootstrap.sh --edition hd` | HD edition (`io.github.imbaner.fallout2ce.hd`), own icon, files and saves |
-| `WastelandReborn-Setup.exe` | `windows/build.sh` | Windows 10/11 installer, EN/FR, ≈ 830 MB |
+| `Wasteland-arm64.apk` | `./bootstrap.sh` | classic edition, Android 7.0+, arm64, 5.2 MB |
+| `Wasteland-HD-arm64.apk` | `./bootstrap.sh --edition hd` | HD edition (`Wasteland HD`), 3.7 MB, own icon, files and saves |
+| `WastelandReborn-Setup.exe` | `windows/build.sh` | Windows 10/11 installer, EN/FR, about 830 MB |
 | `WastelandRebornHD-Setup.exe` | `EDITION=hd windows/build.sh` | installs beside the classic edition (`%LOCALAPPDATA%\WastelandRebornHD`) |
 | `SHA256SUMS.txt` | `tools/release.sh` | checksums of the four files above plus the two texts |
 | `README.txt`, `LISEZ-MOI.txt` | `windows/` | the instructions shipped with the installer (EN / FR) |
 
-Both APKs are signed with the same Android debug key the previous releases
-used, so an APK install is an update over `v1.1` and keeps saves. The two
+Both APKs use the same signing key as the previous release, so installing
+the matching v1.4 APK over an existing app keeps saves. The two
 installers keep separate settings, saves and registry keys, so they can be
 installed together.
 
@@ -57,7 +57,7 @@ Notes:
 tools/release.sh                        # DRY RUN (default): prints every command
 tools/release.sh --publish              # build, upload, publish
 tools/release.sh --publish --skip-build # reuse apk/ and windows/dist/
-tools/release.sh --publish --notes-file notes-v1.2.md
+tools/release.sh --publish --notes-file notes-v1.4.md
 tools/release.sh --publish --chunked    # force chunked EXE uploads
 ```
 
@@ -66,12 +66,12 @@ What it does, in order:
 1. Builds both editions (unless `--skip-build`).
 2. Copies the four binaries and the two instruction texts into
    `windows/dist/` and regenerates `SHA256SUMS.txt` over all six.
-3. `gh release create v1.2 --draft`, then uploads each asset.
-4. Publishes it: `gh release edit v1.2 --draft=false --latest`.
+3. `gh release create v1.4 --draft`, then uploads each asset.
+4. Publishes it: `gh release edit v1.4 --draft=false --latest`.
 5. `gh release view` to list the assets of the draft/final release.
 
 Write the release notes first (a `--notes-file` markdown file: what is new in
-v1.2, the four download links with their sizes, and the "no game files
+v1.4, the four download links with their sizes, and the "no game files
 included" line). Without it the script falls back to `--generate-notes`.
 
 ### Large or flaky uploads: chunks + the assemble workflow
@@ -79,7 +79,7 @@ included" line). Without it the script falls back to `--generate-notes`.
 GitHub refuses assets over 2 GiB, and an 830 MB upload can drop. When an EXE
 is over the limit, or when `--chunked` is given, `tools/release.sh`:
 
-- splits it into verified 24 MiB parts under `windows/dist/.chunks-v1.2/`,
+- splits it into verified 24 MiB parts under `windows/dist/.chunks-v1.4/`,
 - writes `<name>.manifest.json` (`github-release-chunks-v1`: whole size and
   SHA-256, plus a SHA-256 per part; the split is re-usable on a retry),
 - uploads the manifest and the parts,
@@ -93,7 +93,7 @@ path the workflow publishes, not the script** — watch it:
 
 ```sh
 gh run watch Linutesto/wasteland-reborn-installer
-gh release view v1.2 -R Linutesto/wasteland-reborn-installer
+gh release view v1.4 -R Linutesto/wasteland-reborn-installer
 ```
 
 `--branch` (default: the current branch) selects the branch the workflow runs
@@ -104,7 +104,7 @@ on; the workflow file must exist on that branch.
 - `python3 -m unittest discover -s windows/tests -v` → 7 tests, OK.
 - `bash -n bootstrap.sh windows/build.sh tools/*.sh windows/tests/*.sh`.
 - `sha256sum -c SHA256SUMS.txt` inside `windows/dist/`.
-- `gh release view v1.2` shows all seven assets and `isDraft: false`.
+- `gh release view v1.4` shows all seven assets and `isDraft: false`.
 - On a phone: install the APK from the release link over an existing install
   (saves must survive), then fresh-install on a second device and complete the
   game-files import.
@@ -113,16 +113,14 @@ on; the workflow file must exist on that branch.
 
 The HD app and the HD installer both read
 `https://raw.githubusercontent.com/Linutesto/wasteland-hd-assets/main/packs.json`
-(`HdPacks.MANIFEST_URL` in the engine, `ASSETS` in `wasteland_hd`). The
-proposed next version is `tmp-release/packs.proposed.json`.
+(`HdPacks.MANIFEST_URL` in the engine, `ASSETS` in `wasteland_hd`). At v1.4, the published packs are listed below.
 
-### Plan: one `world` pack now, `critters-NN` later
+### Published packs and future critter packs
 
-- **`world`** — everything that is finished and joins as one piece: tiles,
-  walls, scenery, items, misc, heads, interface. One download, one ZIP.
-- **`critters-NN`** — critters arrive as separate packs as production
-  finishes them (`critters-01`, `critters-02`, …), so a phone downloads only
-  what exists, then tops up later instead of re-downloading a growing ZIP.
+- **`world`** — world floors, walls, scenery and items (9,422 images; 440 MB).
+- **`heads`** — talking heads (1,352 images; 468 MB).
+- **`critters-NN`** — critter art is in production. The first pack is not
+  published; do not promise a release date.
 
 Each pack is a **separate entry with a permanent `name`**. The phone records
 installed packs in `data/hd/.installed-packs.json` (name → SHA-256) and the PC

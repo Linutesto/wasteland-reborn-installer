@@ -59,6 +59,8 @@ The installer offers to pull the small `qwen3:4b` model. The local brain listens
 
 ## Optional Android phone install
 
+Requires Android 7.0 or newer and arm64. The classic APK is 5.2 MB and the HD APK is 3.7 MB; installing an update over the same app keeps saves. Allow about 2 GB free for game files. HD packs download about 910 MB and use about 2 GB unpacked, so keep at least 3 GB free in total. A real-phone install from Linux has not yet been tested.
+
 Enable USB debugging and accept your PC's prompt on the phone. With the phone connected:
 
 ```sh

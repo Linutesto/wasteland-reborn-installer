@@ -234,7 +234,9 @@ move, or the download restarts every launch.
    the game, and an interrupted download **resumes** at the next launch
    (the setup log line is *"HD update skipped (can retry next launch)"*).
 2. Check the phone/PC is online and the offer's size fits your free space
-   (the offer states it in MB).
+   (the offer states it in MB). The v1.4 world pack is 440 MB (9,422 images);
+   heads are 468 MB (1,352 images), about 910 MB total to download and about
+   2 GB unpacked with the game. Keep at least 3 GB free.
 3. Close the app fully and start it again: the offer reappears with
    **Download**.
 4. `HD packs unavailable for now: ...` during PC setup → the pack you
@@ -249,8 +251,7 @@ needed."*, or Windows complains there is not enough room.
 
 **Phone:**
 
-1. Free at least the amount the message asks for (the game needs ~2 GB in
-   total).
+1. Free at least the amount the message asks for (the game files need about 2 GB; allow at least 3 GB total with HD art).
 2. Old saves are the easiest win: in the game's settings → **Game files**
    → **Export saves** (keep the zip), then **Delete all saves**.
 3. Clear space elsewhere (downloads, photos, unused apps) and start the

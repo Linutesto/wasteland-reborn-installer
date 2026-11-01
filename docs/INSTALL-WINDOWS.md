@@ -44,7 +44,7 @@ No game files are included in either download: you must own Fallout 2
      there, the game is not fully installed — go to
      [Troubleshooting](TROUBLESHOOTING.md#the-game-is-not-downloaded-or-not-verified).
 4. **The phone (optional)** — you can skip it and add it later.
-   - Android **7.0 or newer**, **64-bit (arm64)**, about **2 GB free**.
+   - Android **7.0 or newer**, **64-bit (arm64)**. Allow **2 GB free** for game files, or at least **3 GB total** with HD art.
    - Almost every phone from the last few years qualifies; the installer
      checks it for you and tells you if yours does not.
 5. **Ollama (optional) — this is the AI for the NPCs.** Only install it if
@@ -63,7 +63,7 @@ No game files are included in either download: you must own Fallout 2
    <https://github.com/Linutesto/wasteland-reborn-installer/releases/latest>
 2. Download **one** setup file:
    - `WastelandReborn-Setup.exe` (classic) or
-   - `WastelandRebornHD-Setup.exe` (HD) — both are ≈ 830 MB.
+   - `WastelandRebornHD-Setup.exe` (HD) — each installer is about 830 MB.
    Also download `SHA256SUMS.txt` (a small text file with the checksums).
    - *You should see:* the file(s) in your `Downloads` folder.
 3. **Windows SmartScreen** (it appears later, when you run the file):
@@ -271,7 +271,7 @@ install on a *second* phone).
    [`Wasteland-arm64.apk`](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)
    (classic) or
    [`Wasteland-HD-arm64.apk`](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-HD-arm64.apk)
-   (HD) — about 4 MB.
+   (HD) — 5.2 MB for classic or 3.7 MB for HD.
 2. Tap the downloaded APK → Android asks permission to install apps from
    that source (Chrome, Files…) → allow it once → **Install**.
    - The app is not signed by Google Play; that is expected.
@@ -290,6 +290,8 @@ install on a *second* phone).
      on a French phone (the HD art screen is translated).
 
 ## 6. HD art (HD edition only)
+
+The v1.4 packs are world, 440 MB (9,422 images), and heads, 468 MB (1,352 images). Together they download to about 910 MB and use about 2 GB unpacked with the game. Keep at least 3 GB free on the phone. Critter art is in production; the first pack is not published and no date is promised.
 
 The HD packs are downloaded **by the app itself**; you never copy them by
 hand.

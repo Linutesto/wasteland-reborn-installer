@@ -59,6 +59,8 @@ Le script propose le petit modèle `qwen3:4b`. Le cerveau local écoute sur `127
 
 ## Téléphone Android (optionnel)
 
+Il faut Android 7.0 ou plus récent et arm64. L’APK classique fait 5,2 Mo et le HD 3,7 Mo ; une mise à jour de la même app conserve les sauvegardes. Prévois environ 2 Go libres pour le jeu. Les packs HD téléchargent environ 910 Mo et occupent environ 2 Go décompressés : garde au moins 3 Go libres au total. L’installation sur un vrai téléphone depuis Linux n’a pas encore été testée.
+
 Active le débogage USB et accepte la demande affichée sur le téléphone :
 
 ```sh

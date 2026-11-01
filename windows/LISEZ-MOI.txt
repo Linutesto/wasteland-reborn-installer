@@ -1,4 +1,4 @@
-WASTELAND REBORN — Fallout 2 Restoration Project + PNJ avec IA
+WASTELAND REBORN v1.4 — Fallout 2 sur Android et Windows
 ================================================================
 
 CE QU'IL TE FAUT
@@ -6,7 +6,12 @@ CE QU'IL TE FAUT
 - Ta copie de Fallout 2 installee (Epic, Steam ou GOG). L'installation
   retrouve ton jeu et prend ses fichiers : rien du jeu n'est inclus ici.
 - Optionnel : Ollama (https://ollama.com) pour les PNJ avec IA.
-- Optionnel : un telephone Android 64 bits pour y installer le jeu.
+- Android 7.0 ou plus recent, arm64. APK classique : 5,2 Mo ; HD : 3,7 Mo.
+  Apps : Wasteland et Wasteland HD. Une mise a jour APK garde les sauvegardes.
+- Environ 2 Go libres pour le jeu ; garde au moins 3 Go avec l’art HD.
+  Packs HD : monde 440 Mo (9 422 images), tetes 468 Mo (1 352 images) ;
+  environ 910 Mo a telecharger et 2 Go decompresse avec le jeu.
+- Fallout 2 n’est pas inclus : apporte ta copie. Projet de fans non officiel.
 
 INSTALLER
 1. Double-clique sur WastelandReborn-Setup.exe.
@@ -47,7 +52,7 @@ LE TELEPHONE
   meme Wi-Fi que le PC. Un petit menu te laisse choisir le telephone (ou en
   associer un avec le code a 6 chiffres), ou passer.
 - Plus tard : menu Demarrer > « Wasteland - Installer sur le telephone ».
-- L'app s'appelle « Wasteland » (icone verte), a cote de l'autre si tu l'as deja.
+- Apps : « Wasteland » (classique) et « Wasteland HD » ; elles coexistent.
 - IA sur le telephone : le PC doit etre allume avec « Wasteland - Serveur IA
   (telephone) » ouvert. Dans le menu, choisis « Partout » pour que ca marche
   hors de la maison : l'installation installe Tailscale (VPN prive gratuit)

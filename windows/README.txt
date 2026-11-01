@@ -1,11 +1,16 @@
-WASTELAND REBORN — Fallout 2 Restoration Project + AI NPCs, for Android phones
+WASTELAND REBORN v1.4 — Fallout 2 for Android and Windows
 =============================================================================
 
 WHAT YOU NEED
 - Windows 10 or 11 (64-bit)
 - Your own Fallout 2, installed (Epic, Steam or GOG). The setup finds your
   game and takes its files: nothing from the game is included here.
-- An Android 64-bit phone to play on (the game is made for touch).
+- Android 7.0 or newer, arm64. Classic APK: 5.2 MB; HD APK: 3.7 MB.
+  Apps are named Wasteland and Wasteland HD. APK updates keep saves.
+- About 2 GB free for game files; keep at least 3 GB free with HD art.
+  HD packs: world 440 MB (9,422 images), heads 468 MB (1,352 images);
+  about 910 MB to download and about 2 GB unpacked with the game.
+- Fallout 2 is not included. Bring your own copy. Unofficial fan project.
 - Optional: Ollama (https://ollama.com) for the AI NPCs.
 
 INSTALL
@@ -39,7 +44,7 @@ THE PHONE
   PC. A small menu lets you pick the phone (or pair one with the 6-digit
   code), or skip.
 - Later: Start menu > "Wasteland - Install on phone".
-- The app is called "Wasteland" (green icon).
+- Classic app: "Wasteland"; HD app: "Wasteland HD".
 - AI on the phone: the PC must be on with "Wasteland - AI server (phone)"
   open. Pick "Everywhere" in the menu so it works away from home: the setup
   installs Tailscale (free private VPN) on the PC and the phone. Log in with

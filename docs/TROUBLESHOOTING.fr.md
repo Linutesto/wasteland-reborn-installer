@@ -251,7 +251,9 @@ le téléchargement repart à chaque démarrage.
    démarrage (la ligne du journal est *« HD update skipped (can retry next
    launch)"*).
 2. Vérifie que le téléphone/le PC est en ligne et que la taille annoncée
-   en Mo tient dans ton espace libre.
+   en Mo tient dans ton espace libre. En v1.4, le pack monde fait 440 Mo
+   (9 422 images) et les têtes 468 Mo (1 352 images) : environ 910 Mo à
+   télécharger et 2 Go décompressés avec le jeu. Garde au moins 3 Go libres.
 3. Ferme l'app pour de rouvre-la : l'offre revient avec
    **« Télécharger »**.
 4. *« Packs HD indisponibles pour le moment : … »* pendant la setup PC →
@@ -267,7 +269,7 @@ needed. »*, ou Windows se plaint qu'il n'y a pas assez de place.
 
 **Téléphone :**
 
-1. Libère au moins ce que le message demande (il faut ~2 Go au total).
+1. Libère au moins ce que le message demande (il faut environ 2 Go pour les fichiers du jeu, au moins 3 Go au total avec l’art HD).
 2. Les vieilles sauvegardes sont le plus simple : dans les réglages du jeu
    → **Game files** → **Export saves** (garde le zip), puis
    **Delete all saves**.

@@ -46,8 +46,7 @@ les fichiers de chez toi.
      fichiers, le jeu n'est pas complet — va dans
      [Dépannage](TROUBLESHOOTING.fr.md#le-jeu-nest-pas-téléchargé-ou-pas-vérifié).
 4. **Le téléphone (optionnel)** — tu peux sauter et l'ajouter plus tard.
-   - Android **7.0 ou plus récent**, **64 bits (arm64)**, environ
-     **2 Go libres**.
+   - Android **7.0 ou plus récent**, **64 bits (arm64)**. Prévois **2 Go libres** pour le jeu, ou au moins **3 Go au total** avec l’art HD.
    - Presque tous les téléphones des dernières années passent ; le
      vérifie tout seul et te le dit si le tien passe pas.
 5. **Ollama (optionnel) — c'est l'IA des PNJ.** Installe-le seulement si
@@ -67,7 +66,7 @@ les fichiers de chez toi.
    <https://github.com/Linutesto/wasteland-reborn-installer/releases/latest>
 2. Télécharge **un seul** fichier :
    - `WastelandReborn-Setup.exe` (classique) ou
-   - `WastelandRebornHD-Setup.exe` (HD) — ≈ 830 Mo chacun.
+   - `WastelandRebornHD-Setup.exe` (HD) — environ 830 Mo chacun.
    Télécharge aussi `SHA256SUMS.txt` (un petit fichier texte avec les
    sommes de contrôle).
    - *Tu dois voir :* le(s) fichier(s) dans ton dossier `Téléchargements`.
@@ -281,7 +280,7 @@ d'installer sur un **deuxième** téléphone.
    [`Wasteland-arm64.apk`](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-arm64.apk)
    (classique) ou
    [`Wasteland-HD-arm64.apk`](https://github.com/Linutesto/wasteland-reborn-installer/releases/latest/download/Wasteland-HD-arm64.apk)
-   (HD) — environ 4 Mo.
+   (HD) — 5,2 Mo pour la classique ou 3,7 Mo pour la HD.
 2. Touche l'APK téléchargé → Android demande la permission d'installer des
    apps de cette source (Chrome, Fichiers…) → autorise une fois →
    **Installer**.
@@ -302,6 +301,9 @@ d'installer sur un **deuxième** téléphone.
      des graphismes HD, lui, est traduit).
 
 ## 6. L'art HD (édition HD seulement)
+
+Les packs v1.4 sont le monde, 440 Mo (9 422 images), et les têtes, 468 Mo (1 352 images). Ensemble, le téléchargement fait environ 910 Mo et ils occupent environ 2 Go décompressés avec le jeu. Garde au moins 3 Go libres sur le téléphone. L’art des créatures est en production ; le premier pack n’est pas publié et aucune date n’est annoncée.
+
 
 Les packs d'art HD se téléchargent **tout seul dans l'app** ; tu ne les
 copies jamais à la main.
